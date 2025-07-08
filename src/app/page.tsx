@@ -22,7 +22,6 @@ import {
   Captions,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
 const youtubeTools = [
   { href: "/youtube-script", title: "YouTube Script Generator", description: "Generate full video scripts from a simple topic or idea.", icon: Youtube, imageUrl: "https://placehold.co/500x300.png", dataAiHint: "holographic script" },
@@ -87,33 +86,20 @@ export default function DashboardPage() {
         variants={containerVariants}
         initial="hidden"
         animate="visible"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
       >
-        <Carousel
-          opts={{
-            align: "start",
-            dragFree: true,
-          }}
-          className="w-full"
-        >
-          <CarouselContent className="-ml-8">
-            {tools.map((tool) => (
-              <CarouselItem key={tool.href} className="pl-8 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
-                <motion.div variants={itemVariants} className="h-full">
-                  <ToolCard
-                    href={tool.href}
-                    title={tool.title}
-                    description={tool.description}
-                    icon={tool.icon}
-                    imageUrl={tool.imageUrl}
-                    dataAiHint={tool.dataAiHint}
-                  />
-                </motion.div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious className="hidden md:flex" />
-          <CarouselNext className="hidden md:flex" />
-        </Carousel>
+        {tools.map((tool) => (
+          <motion.div key={tool.href} variants={itemVariants}>
+            <ToolCard
+              href={tool.href}
+              title={tool.title}
+              description={tool.description}
+              icon={tool.icon}
+              imageUrl={tool.imageUrl}
+              dataAiHint={tool.dataAiHint}
+            />
+          </motion.div>
+        ))}
       </motion.div>
     </section>
   );
