@@ -1,3 +1,4 @@
+// src/components/tool-card.tsx
 import Link from 'next/link';
 import Image from 'next/image';
 import type { LucideIcon } from 'lucide-react';
@@ -16,17 +17,24 @@ interface ToolCardProps {
 export function ToolCard({ title, description, href, icon: Icon, imageUrl, dataAiHint }: ToolCardProps) {
   return (
     <motion.div
-      whileHover={{ y: -8, scale: 1.03 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 15 }}
+      whileHover="hover"
+      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
       className="h-full"
     >
-      <Link href={href} className="group flex flex-col h-full">
-        <div className={cn(
-          "flex flex-col h-full rounded-xl overflow-hidden",
-          "bg-white/[.05] border border-white/[.1] shadow-xl",
-          "hover:border-primary/50 transition-colors duration-300",
-          "hover:shadow-2xl hover:shadow-primary/20"
+      <Link href={href} className="group block h-full">
+        <motion.div 
+          variants={{
+            initial: { y: 0 },
+            hover: { y: -8 }
+          }}
+          className={cn(
+            "relative flex flex-col h-full rounded-2xl overflow-hidden",
+            "bg-white/[.05] border border-white/[.1] shadow-xl",
+            "transition-shadow duration-300",
+            "group-hover:shadow-2xl group-hover:shadow-primary/20"
         )}>
+           <div className="absolute inset-0 z-10 rounded-2xl border-2 border-transparent group-hover:border-primary transition-all duration-300 pointer-events-none" />
+
           <div className="relative w-full h-40 overflow-hidden">
             <Image
               src={imageUrl}
@@ -46,7 +54,7 @@ export function ToolCard({ title, description, href, icon: Icon, imageUrl, dataA
             </div>
             <p className="text-muted-foreground mt-2 text-sm flex-1">{description}</p>
           </div>
-        </div>
+        </motion.div>
       </Link>
     </motion.div>
   );
