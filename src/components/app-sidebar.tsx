@@ -86,7 +86,7 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarHeader>
         <div className="flex items-center gap-3 p-2 pr-0">
-            <div className="bg-primary rounded-lg p-2">
+            <div className="bg-gradient-to-br from-primary to-purple-400 rounded-lg p-2 glow-primary">
                 <Bot size={24} className="text-primary-foreground" />
             </div>
             <span className="text-lg font-semibold">ContentForge</span>

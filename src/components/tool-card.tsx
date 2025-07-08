@@ -1,38 +1,44 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface ToolCardProps {
   title: string;
-  description: string;
   href: string;
   icon: LucideIcon;
+  imageUrl: string;
+  dataAiHint: string;
 }
 
-export function ToolCard({ title, description, href, icon: Icon }: ToolCardProps) {
+export function ToolCard({ title, href, icon: Icon, imageUrl, dataAiHint }: ToolCardProps) {
   return (
-    <Link href={href} className="group flex flex-col h-full">
-      <Card className="flex flex-col h-full hover:border-primary/80 transition-colors duration-200 bg-card">
-        <CardHeader>
-          <div className="flex items-start gap-4">
-            <div className="bg-primary/10 p-3 rounded-lg group-hover:bg-primary/20 transition-colors">
-              <Icon className="w-6 h-6 text-primary" />
+    <motion.div
+      whileHover={{ scale: 1.03, y: -5 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 15 }}
+      className="h-full"
+    >
+      <Link href={href} className="group flex flex-col h-full">
+        <Card className="flex flex-col h-full bg-card/80 border-border/60 hover:border-primary/50 transition-colors duration-300 overflow-hidden shadow-lg hover:shadow-primary/20">
+          <div className="relative w-full h-40 overflow-hidden">
+             <Image
+              src={imageUrl}
+              alt={title}
+              data-ai-hint={dataAiHint}
+              fill
+              className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+            <div className="absolute bottom-4 left-4 flex items-center gap-2">
+                <div className="bg-white/10 p-2 rounded-lg backdrop-blur-sm border border-white/20">
+                    <Icon className="w-5 h-5 text-white" />
+                </div>
+                <CardTitle className="text-base font-semibold text-white tracking-wide">{title}</CardTitle>
             </div>
-            <CardTitle className="pt-2 text-base font-semibold">{title}</CardTitle>
           </div>
-        </CardHeader>
-        <CardContent className="flex-grow">
-          <CardDescription>{description}</CardDescription>
-        </CardContent>
-        <CardFooter>
-            <Button variant="ghost" className="w-full justify-start p-0 h-auto text-primary/80 group-hover:text-primary">
-                <span>Use Tool</span>
-                <ArrowRight className="w-4 h-4 ml-2 transform transition-transform duration-200 group-hover:translate-x-1" />
-            </Button>
-        </CardFooter>
-      </Card>
-    </Link>
+        </Card>
+      </Link>
+    </motion.div>
   );
 }
