@@ -1,5 +1,6 @@
+'use client';
 // src/hooks/use-auth.ts
-import { useState, useEffect, useContext, createContext, ReactNode } from 'react';
+import React, { useState, useEffect, useContext, createContext, ReactNode } from 'react';
 import { 
   User, 
   GoogleAuthProvider, 
@@ -67,7 +68,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const value = { user, loading, signInWithGoogle, signInWithGitHub, signOut };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return React.createElement(AuthContext.Provider, { value: value }, children);
 };
 
 export const useAuth = () => {
