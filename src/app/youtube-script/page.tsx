@@ -153,7 +153,7 @@ export default function YoutubeScriptGeneratorPage() {
               </div>
             )}
             {output && (
-              <div className="whitespace-pre-wrap text-sm max-h-[calc(100vh-14rem)] overflow-y-auto rounded-md border p-4 font-mono">
+              <div className="whitespace-pre-wrap text-sm max-h-[calc(100vh-14rem)] overflow-y-auto rounded-md border p-4 font-mono bg-secondary">
                 {output.script}
               </div>
             )}

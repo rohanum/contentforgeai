@@ -14,20 +14,20 @@ interface ToolCardProps {
 export function ToolCard({ title, description, href, icon: Icon }: ToolCardProps) {
   return (
     <Link href={href} className="group flex flex-col h-full">
-      <Card className="flex flex-col h-full hover:border-primary transition-colors duration-200 bg-card">
+      <Card className="flex flex-col h-full hover:border-primary/80 transition-colors duration-200 bg-card">
         <CardHeader>
           <div className="flex items-start gap-4">
-            <div className="bg-primary/10 p-3 rounded-lg">
+            <div className="bg-primary/10 p-3 rounded-lg group-hover:bg-primary/20 transition-colors">
               <Icon className="w-6 h-6 text-primary" />
             </div>
-            <CardTitle className="pt-2">{title}</CardTitle>
+            <CardTitle className="pt-2 text-base font-semibold">{title}</CardTitle>
           </div>
         </CardHeader>
         <CardContent className="flex-grow">
           <CardDescription>{description}</CardDescription>
         </CardContent>
         <CardFooter>
-            <Button variant="ghost" className="w-full justify-start p-0 h-auto text-primary">
+            <Button variant="ghost" className="w-full justify-start p-0 h-auto text-primary/80 group-hover:text-primary">
                 <span>Use Tool</span>
                 <ArrowRight className="w-4 h-4 ml-2 transform transition-transform duration-200 group-hover:translate-x-1" />
             </Button>

@@ -48,7 +48,7 @@ export default function DashboardPage() {
   return (
     <div>
       <header>
-        <h1 className="text-3xl font-bold tracking-tight">Welcome to ContentForge AI</h1>
+        <h1 className="text-4xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">Welcome to ContentForge AI</h1>
         <p className="text-muted-foreground mt-2">Your all-in-one AI toolkit for content creation.</p>
       </header>
       <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-8">

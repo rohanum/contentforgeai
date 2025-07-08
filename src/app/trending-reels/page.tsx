@@ -20,9 +20,9 @@ const formSchema = z.object({
 });
 
 const popularityMap: Record<string, { icon: string; text: string; className: string }> = {
-  'Very Hot': { icon: '🔥🔥🔥', text: 'Very Hot', className: 'text-red-500 border-red-500/30' },
-  'Gaining Momentum': { icon: '🔥🔥', text: 'Gaining Momentum', className: 'text-orange-500 border-orange-500/30' },
-  'Niche-Specific': { icon: '🔥', text: 'Niche-Specific', className: 'text-amber-500 border-amber-500/30' },
+  'Very Hot': { icon: '🔥🔥🔥', text: 'Very Hot', className: 'text-red-400 border-red-400/30' },
+  'Gaining Momentum': { icon: '🔥🔥', text: 'Gaining Momentum', className: 'text-orange-400 border-orange-400/30' },
+  'Niche-Specific': { icon: '🔥', text: 'Niche-Specific', className: 'text-amber-400 border-amber-400/30' },
 };
 
 export default function TrendingReelsPage() {
@@ -107,24 +107,25 @@ export default function TrendingReelsPage() {
       </div>
       
       <div className="lg:col-span-2 relative">
-        <Card className="min-h-[calc(100vh-6.5rem)]">
-          <CardHeader>
-            <CardTitle>Trending Reels & Ideas</CardTitle>
-            <CardDescription>Hot trends and how you can use them.</CardDescription>
-          </CardHeader>
-          <CardContent>
+        <div className="space-y-4">
+            <CardHeader className="p-0">
+                <CardTitle>Trending Reels & Ideas</CardTitle>
+                <CardDescription>Hot trends and how you can use them.</CardDescription>
+            </CardHeader>
+
             {isLoading && (
-              <div className="flex items-center justify-center h-96">
+            <div className="flex items-center justify-center h-96">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              </div>
+            </div>
             )}
+            
             {output && (
-              <div className="space-y-4 max-h-[calc(100vh-12rem)] overflow-y-auto pr-2">
+            <div className="space-y-4 max-h-[calc(100vh-12rem)] overflow-y-auto pr-2">
                 {output.trends.map((trend, index) => {
-                  const popularityInfo = popularityMap[trend.popularity] || { icon: '🤔', text: 'Unknown', className: 'text-muted-foreground' };
-                  return (
-                    <Card key={index} className="bg-secondary/50">
-                      <CardHeader>
+                const popularityInfo = popularityMap[trend.popularity] || { icon: '🤔', text: 'Unknown', className: 'text-muted-foreground' };
+                return (
+                    <Card key={index} className="bg-card">
+                    <CardHeader>
                         <div className="flex justify-between items-start gap-2">
                             <CardTitle className="flex items-center gap-2 text-base">
                                 <Flame className="w-5 h-5 text-primary flex-shrink-0"/>
@@ -136,50 +137,49 @@ export default function TrendingReelsPage() {
                             </Badge>
                         </div>
                         <CardDescription className="pt-2">{trend.reason}</CardDescription>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                          <div className="p-4 rounded-md bg-background border border-dashed border-primary/50">
-                              <div className="flex justify-between items-center mb-2">
-                                  <h4 className="font-semibold text-sm flex items-center gap-2">
-                                      <Lightbulb className="w-4 h-4 text-primary"/>
-                                      <span>Your Content Idea</span>
-                                  </h4>
-                                  <Button variant="ghost" size="icon" onClick={() => handleCopy(trend.contentSuggestion)}>
-                                      <Copy className="h-4 w-4" />
-                                  </Button>
-                              </div>
-                              <p className="text-sm text-muted-foreground">{trend.contentSuggestion}</p>
-                          </div>
-                          <div className="p-4 rounded-md bg-background border">
-                              <h4 className="font-semibold text-sm flex items-center gap-2 mb-2">
-                                  <Megaphone className="w-4 h-4 text-primary"/>
-                                  <span>Suggested CTA</span>
-                              </h4>
-                              <p className="text-sm text-muted-foreground italic">"{trend.suggestedCTA}"</p>
-                          </div>
-                      </CardContent>
-                      <CardFooter className="flex flex-wrap gap-2">
-                          <Button variant="outline" size="sm" disabled>
-                              <Bookmark className="mr-2 h-4 w-4" />
-                              Save Trend
-                          </Button>
-                          <Button size="sm" onClick={() => handleTurnIntoScript(trend.contentSuggestion)}>
-                              <PenSquare className="mr-2 h-4 w-4" />
-                              Turn into Reel Script
-                          </Button>
-                      </CardFooter>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div className="p-4 rounded-md bg-background border border-dashed border-primary/50">
+                            <div className="flex justify-between items-center mb-2">
+                                <h4 className="font-semibold text-sm flex items-center gap-2">
+                                    <Lightbulb className="w-4 h-4 text-primary"/>
+                                    <span>Your Content Idea</span>
+                                </h4>
+                                <Button variant="ghost" size="icon" onClick={() => handleCopy(trend.contentSuggestion)}>
+                                    <Copy className="h-4 w-4" />
+                                </Button>
+                            </div>
+                            <p className="text-sm text-muted-foreground">{trend.contentSuggestion}</p>
+                        </div>
+                        <div className="p-4 rounded-md bg-background border">
+                            <h4 className="font-semibold text-sm flex items-center gap-2 mb-2">
+                                <Megaphone className="w-4 h-4 text-primary"/>
+                                <span>Suggested CTA</span>
+                            </h4>
+                            <p className="text-sm text-muted-foreground italic">"{trend.suggestedCTA}"</p>
+                        </div>
+                    </CardContent>
+                    <CardFooter className="flex flex-wrap gap-2">
+                        <Button variant="outline" size="sm" disabled>
+                            <Bookmark className="mr-2 h-4 w-4" />
+                            Save Trend
+                        </Button>
+                        <Button size="sm" onClick={() => handleTurnIntoScript(trend.contentSuggestion)}>
+                            <PenSquare className="mr-2 h-4 w-4" />
+                            Turn into Reel Script
+                        </Button>
+                    </CardFooter>
                     </Card>
-                  )
+                )
                 })}
-              </div>
+            </div>
             )}
             {!isLoading && !output && (
-              <div className="flex items-center justify-center h-96 text-center text-muted-foreground border-2 border-dashed rounded-lg">
+            <div className="flex items-center justify-center h-96 text-center text-muted-foreground border-2 border-dashed rounded-lg">
                 <p>Enter a topic to discover trending Reels.</p>
-              </div>
+            </div>
             )}
-          </CardContent>
-        </Card>
+        </div>
       </div>
     </div>
   );

@@ -74,7 +74,7 @@ export function AppSidebar() {
   const renderLinks = (links: typeof youtubeSuite) => links.map((link) => (
     <SidebarMenuItem key={link.label}>
         <SidebarMenuButton asChild isActive={isActive(link.href)} tooltip={link.label}>
-          <Link href={link.href} className="flex items-center gap-2">
+          <Link href={link.href} className="flex items-center gap-3">
             <link.icon className="shrink-0" />
             <span>{link.label}</span>
           </Link>
@@ -85,18 +85,18 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
-        <div className="flex items-center gap-2 p-2 pr-0">
+        <div className="flex items-center gap-3 p-2 pr-0">
             <div className="bg-primary rounded-lg p-2">
                 <Bot size={24} className="text-primary-foreground" />
             </div>
             <span className="text-lg font-semibold">ContentForge</span>
         </div>
       </SidebarHeader>
-      <SidebarMenu className="flex-1">
+      <SidebarMenu className="flex-1 px-2">
         {mainNav.map((link) => (
           <SidebarMenuItem key={link.label}>
             <SidebarMenuButton asChild isActive={isActive(link.href)} tooltip={link.label}>
-                <Link href={link.href} className="flex items-center gap-2">
+                <Link href={link.href} className="flex items-center gap-3">
                     <link.icon className="shrink-0" />
                     <span>{link.label}</span>
                 </Link>
@@ -104,13 +104,13 @@ export function AppSidebar() {
           </SidebarMenuItem>
         ))}
         <SidebarSeparator className="my-2" />
-        <SidebarGroupLabel>YouTube Suite</SidebarGroupLabel>
+        <SidebarGroupLabel className="px-2">YouTube Suite</SidebarGroupLabel>
         {renderLinks(youtubeSuite)}
         <SidebarSeparator className="my-2" />
-        <SidebarGroupLabel>Social Suite</SidebarGroupLabel>
+        <SidebarGroupLabel className="px-2">Social Suite</SidebarGroupLabel>
         {renderLinks(socialSuite)}
         <SidebarSeparator className="my-2" />
-        <SidebarGroupLabel>Utilities</SidebarGroupLabel>
+        <SidebarGroupLabel className="px-2">Utilities</SidebarGroupLabel>
         {renderLinks(utilities)}
       </SidebarMenu>
       <SidebarFooter>
