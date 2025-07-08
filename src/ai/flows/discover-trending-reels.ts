@@ -54,8 +54,29 @@ const discoverTrendingReelsFlow = ai.defineFlow(
     inputSchema: DiscoverTrendingReelsInputSchema,
     outputSchema: DiscoverTrendingReelsOutputSchema,
   },
-  async input => {
-    const {output} = await prompt(input);
-    return output!;
+  async (input) => {
+    const MAX_RETRIES = 3;
+    const RETRY_DELAY_MS = 1000;
+
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        const { output } = await prompt(input);
+        return output!;
+      } catch (error) {
+        if (
+          error instanceof Error &&
+          (error.message.includes('503') || error.message.includes('overloaded')) &&
+          attempt < MAX_RETRIES
+        ) {
+          console.log(`Attempt ${attempt} failed. Retrying in ${RETRY_DELAY_MS * attempt}ms...`);
+          await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS * attempt));
+        } else {
+          // Non-retryable error or max retries reached
+          throw error;
+        }
+      }
+    }
+    // This should not be reachable due to the throw in the catch block, but included for type safety.
+    throw new Error('Failed to discover trending reels after multiple attempts.');
   }
 );
