@@ -63,9 +63,9 @@ const discoverTrendingReelsFlow = ai.defineFlow(
         const { output } = await prompt(input);
         return output!;
       } catch (error) {
+        const errorMessage = String(error);
         if (
-          error instanceof Error &&
-          (error.message.includes('503') || error.message.includes('overloaded')) &&
+          (errorMessage.includes('503') || errorMessage.includes('overloaded')) &&
           attempt < MAX_RETRIES
         ) {
           console.log(`Attempt ${attempt} failed. Retrying in ${RETRY_DELAY_MS * attempt}ms...`);
