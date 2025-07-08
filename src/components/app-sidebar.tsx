@@ -89,13 +89,13 @@ export function AppSidebar() {
             <div className="bg-gradient-to-br from-primary to-purple-400 rounded-lg p-2 glow-primary">
                 <Bot size={24} className="text-primary-foreground" />
             </div>
-            <span className="text-lg font-semibold">ContentForge</span>
+            <span className="text-xl font-bold tracking-wide">ContentForge</span>
         </div>
       </SidebarHeader>
       <SidebarMenu className="flex-1 px-2">
         {mainNav.map((link) => (
           <SidebarMenuItem key={link.label}>
-            <SidebarMenuButton asChild isActive={isActive(link.href)} tooltip={link.label}>
+            <SidebarMenuButton asChild isActive={isActive(link.href)} tooltip={link.label} size="lg">
                 <Link href={link.href} className="flex items-center gap-3">
                     <link.icon className="shrink-0" />
                     <span>{link.label}</span>
