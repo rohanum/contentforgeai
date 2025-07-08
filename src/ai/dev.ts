@@ -14,3 +14,4 @@ import '@/ai/flows/improve-script.ts';
 import '@/ai/flows/generate-reel-script.ts';
 import '@/ai/flows/generate-carousel-slides.ts';
 import '@/ai/flows/convert-video-to-script.ts';
+import '@/ai/flows/generate-voiceover.ts';
