@@ -37,9 +37,13 @@ export default function TrendingReelsPage() {
       setOutput(result);
     } catch (error) {
       console.error(error);
+      let description = "Failed to discover trending reels. Please try again.";
+      if (error instanceof Error && (error.message.includes('503') || error.message.includes('overloaded'))) {
+        description = "The AI model is currently busy. Please wait a moment and try again.";
+      }
       toast({
         title: "Error",
-        description: "Failed to discover trending reels. Please try again.",
+        description: description,
         variant: "destructive",
       });
     } finally {
