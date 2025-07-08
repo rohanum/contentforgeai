@@ -1,4 +1,3 @@
-// src/components/tool-card.tsx
 import Link from 'next/link';
 import Image from 'next/image';
 import type { LucideIcon } from 'lucide-react';
@@ -25,15 +24,16 @@ export function ToolCard({ title, description, href, icon: Icon, imageUrl, dataA
         <motion.div 
           variants={{
             initial: { y: 0 },
-            hover: { y: -8 }
+            hover: { y: -8, scale: 1.03 }
           }}
           className={cn(
             "relative flex flex-col h-full rounded-2xl overflow-hidden",
-            "bg-white/[.05] border border-white/[.1] shadow-xl",
+            "bg-black/20 backdrop-blur-sm border border-white/10 shadow-xl",
             "transition-shadow duration-300",
-            "group-hover:shadow-2xl group-hover:shadow-primary/20"
+            "group-hover:shadow-2xl group-hover:shadow-primary/30",
+            "animated-gradient-border"
         )}>
-           <div className="absolute inset-0 z-10 rounded-2xl border-2 border-transparent group-hover:border-primary transition-all duration-300 pointer-events-none" />
+           <div className="absolute inset-0 z-10 group-hover:animated-gradient-border::before:opacity-100 transition-opacity duration-300 pointer-events-none" />
 
           <div className="relative w-full h-40 overflow-hidden">
             <Image
@@ -43,11 +43,11 @@ export function ToolCard({ title, description, href, icon: Icon, imageUrl, dataA
               fill
               className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
           </div>
-          <div className="p-5 flex-1 flex flex-col">
+          <div className="p-5 flex-1 flex flex-col z-20">
             <div className="flex items-center gap-3">
-              <div className="bg-primary/10 p-2 rounded-lg border border-primary/20">
+              <div className="bg-primary/10 p-2 rounded-lg border border-primary/20 glow-primary">
                 <Icon className="w-5 h-5 text-primary" />
               </div>
               <h3 className="text-lg font-bold text-foreground">{title}</h3>

@@ -26,7 +26,7 @@ export default function RootLayout({
         />
       </head>
       <body className={cn("font-sans antialiased", "aurora-background")}>
-        <div className="absolute top-0 left-0 w-full h-full bg-grid-small-white [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)] z-0"></div>
+        <div className="absolute top-0 left-0 w-full h-full bg-grid-pattern [mask-image:radial-gradient(ellipse_at_center,transparent_10%,black)] z-0"></div>
         <div className="relative z-10">
           <SidebarProvider defaultOpen>
             <AppSidebar />
