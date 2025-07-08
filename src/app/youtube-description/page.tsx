@@ -142,7 +142,7 @@ export default function YoutubeDescriptionPage() {
               </div>
             )}
             {output && (
-              <div className="whitespace-pre-wrap text-sm max-h-[calc(100vh-14rem)] overflow-y-auto rounded-md border p-4 bg-secondary/50">
+              <div className="whitespace-pre-wrap text-sm max-h-[calc(100vh-14rem)] overflow-y-auto rounded-md border p-4 bg-secondary">
                 {output.description}
               </div>
             )}

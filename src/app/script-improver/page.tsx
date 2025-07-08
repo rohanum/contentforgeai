@@ -13,7 +13,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Copy, Wand2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { Separator } from "@/components/ui/separator";
 
 const formSchema = z.object({
   script: z.string().min(20, { message: "Script must be at least 20 characters." }),
@@ -127,7 +126,7 @@ export default function ScriptImproverPage() {
                             </div>
                         )}
                         {output && (
-                            <div className="whitespace-pre-wrap text-sm h-full max-h-[calc(100vh-22rem)] overflow-y-auto rounded-md border p-4 font-mono bg-secondary/50">
+                            <div className="whitespace-pre-wrap text-sm h-full max-h-[calc(100vh-22rem)] overflow-y-auto rounded-md border p-4 font-mono bg-secondary">
                                 {output.improvedScript}
                             </div>
                         )}

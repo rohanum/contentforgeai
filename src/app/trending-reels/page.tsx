@@ -108,7 +108,7 @@ export default function TrendingReelsPage() {
       
       <div className="lg:col-span-2 relative">
         <div className="space-y-4">
-            <CardHeader className="p-0">
+            <CardHeader className="p-0 mb-4">
                 <CardTitle>Trending Reels & Ideas</CardTitle>
                 <CardDescription>Hot trends and how you can use them.</CardDescription>
             </CardHeader>
