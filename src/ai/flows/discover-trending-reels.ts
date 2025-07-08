@@ -20,6 +20,8 @@ const TrendSchema = z.object({
     title: z.string().describe('The title or name of the trending audio or reel format.'),
     reason: z.string().describe("A brief explanation of why this is currently trending."),
     contentSuggestion: z.string().describe("A specific content idea for the user's topic using this trend."),
+    popularity: z.enum(['Very Hot', 'Gaining Momentum', 'Niche-Specific']).describe("An assessment of the trend's current popularity: 'Very Hot' for viral trends, 'Gaining Momentum' for rising trends, or 'Niche-Specific' for trends popular within a certain community."),
+    suggestedCTA: z.string().describe("A specific call-to-action to encourage audience engagement with the reel."),
 });
 
 const DiscoverTrendingReelsOutputSchema = z.object({
@@ -43,6 +45,8 @@ const prompt = ai.definePrompt({
   1.  A title for the trend (e.g., the name of the song, the meme format).
   2.  A brief reason why it's currently popular or how it's being used.
   3.  A specific, actionable content idea for how the user can apply this trend to their own content on the given topic.
+  4.  A popularity rating ('Very Hot', 'Gaining Momentum', or 'Niche-Specific').
+  5.  A suggested Call to Action (CTA) for the content idea.
 
   Topic: {{{topic}}}
   `,

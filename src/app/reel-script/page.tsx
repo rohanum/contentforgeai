@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { generateReelScript, GenerateReelScriptOutput } from "@/ai/flows/generate-reel-script";
+import { useSearchParams } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,6 +25,7 @@ export default function ReelScriptGeneratorPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [output, setOutput] = useState<GenerateReelScriptOutput | null>(null);
   const { toast } = useToast();
+  const searchParams = useSearchParams();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -33,6 +35,14 @@ export default function ReelScriptGeneratorPage() {
       style: "",
     },
   });
+
+  useEffect(() => {
+    const topicFromParams = searchParams.get('topic');
+    if (topicFromParams) {
+        form.setValue('topic', topicFromParams);
+    }
+  }, [searchParams, form]);
+
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
