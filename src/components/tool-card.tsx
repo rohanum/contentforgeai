@@ -16,7 +16,7 @@ interface ToolCardProps {
 export function ToolCard({ title, description, href, icon: Icon, imageUrl, dataAiHint }: ToolCardProps) {
   return (
     <motion.div
-      whileHover={{ y: -8 }}
+      whileHover={{ y: -8, scale: 1.03 }}
       transition={{ type: 'spring', stiffness: 300, damping: 15 }}
       className="h-full"
     >
@@ -24,7 +24,8 @@ export function ToolCard({ title, description, href, icon: Icon, imageUrl, dataA
         <div className={cn(
           "flex flex-col h-full rounded-xl overflow-hidden",
           "bg-white/[.05] border border-white/[.1] shadow-xl",
-          "hover:border-primary/50 transition-colors duration-300"
+          "hover:border-primary/50 transition-colors duration-300",
+          "hover:shadow-2xl hover:shadow-primary/20"
         )}>
           <div className="relative w-full h-40 overflow-hidden">
             <Image
