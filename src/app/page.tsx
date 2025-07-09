@@ -24,7 +24,8 @@ import {
   BrainCircuit,
   Film,
   Video,
-  Rocket
+  Rocket,
+  Zap
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -34,6 +35,7 @@ const strategyTools = [
 ]
 
 const youtubeTools = [
+  { href: "/viral-video-strategist", title: "Viral Video Strategist", description: "Get AI-powered strategic blueprints for your next hit video.", icon: Zap, imageUrl: "https://placehold.co/500x300.png", dataAiHint: "lightning analytics" },
   { href: "/youtube-script", title: "YouTube Script Generator", description: "Generate full video scripts from a simple topic or idea.", icon: Youtube, imageUrl: "https://placehold.co/500x300.png", dataAiHint: "holographic script" },
   { href: "/youtube-title", title: "YouTube Title Generator", description: "Create clickbait-friendly titles that get views.", icon: Type, imageUrl: "https://placehold.co/500x300.png", dataAiHint: "glowing typography" },
   { href: "/youtube-description", title: "Description Generator", description: "Generate SEO-optimized video descriptions in seconds.", icon: FileText, imageUrl: "https://placehold.co/500x300.png", dataAiHint: "data stream interface" },

@@ -6,12 +6,13 @@ import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 import { getSavedYoutubeScripts, SavedYoutubeScript } from "@/lib/firebase/scripts";
 import { getSavedTrends, SavedTrend } from "@/lib/firebase/trends";
+import { getSavedViralVideoConcepts, SavedViralVideoConcept } from "@/lib/firebase/concepts";
 import { formatDistanceToNow } from 'date-fns';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger, DialogClose } from "@/components/ui/dialog";
-import { Loader2, Library, Copy, FileText, Flame, Lightbulb, Megaphone } from "lucide-react";
+import { Loader2, Library, Copy, FileText, Flame, Lightbulb, Megaphone, Zap, Sparkles, DollarSign, Target, TrendingUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +23,7 @@ export default function MyContentPage() {
     const { toast } = useToast();
     const [scripts, setScripts] = useState<SavedYoutubeScript[]>([]);
     const [trends, setTrends] = useState<SavedTrend[]>([]);
+    const [concepts, setConcepts] = useState<SavedViralVideoConcept[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -30,12 +32,14 @@ export default function MyContentPage() {
         } else if (user) {
             const fetchData = async () => {
                 try {
-                    const [userScripts, userTrends] = await Promise.all([
+                    const [userScripts, userTrends, userConcepts] = await Promise.all([
                         getSavedYoutubeScripts(user.uid),
-                        getSavedTrends(user.uid)
+                        getSavedTrends(user.uid),
+                        getSavedViralVideoConcepts(user.uid)
                     ]);
                     setScripts(userScripts);
                     setTrends(userTrends);
+                    setConcepts(userConcepts);
                 } catch (error) {
                     console.error("Failed to fetch content:", error);
                     toast({
@@ -63,6 +67,16 @@ export default function MyContentPage() {
             </div>
         );
     }
+
+    const DetailItem = ({ icon, title, children }: { icon: React.ReactNode, title: string, children: React.ReactNode }) => (
+      <div className="p-4 rounded-lg bg-secondary border">
+        <h4 className="font-semibold text-sm flex items-center gap-2 mb-2">
+          {icon}
+          <span>{title}</span>
+        </h4>
+        <p className="text-sm text-muted-foreground">{children}</p>
+      </div>
+    );
     
     return (
         <div>
@@ -136,7 +150,7 @@ export default function MyContentPage() {
                 )}
             </section>
 
-             <section>
+             <section className="mb-12">
                 <h2 className="text-2xl font-bold mb-4">Saved Trends</h2>
                 {trends.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -199,6 +213,69 @@ export default function MyContentPage() {
                         <h3 className="text-xl font-semibold">No Saved Trends Yet</h3>
                         <p className="text-muted-foreground mt-2">
                            Visit the <a href="/trending-reels" className="text-primary underline">Trending Reels Discovery</a> tool to find and save trends.
+                        </p>
+                    </div>
+                )}
+            </section>
+
+             <section>
+                <h2 className="text-2xl font-bold mb-4">Saved Video Strategies</h2>
+                {concepts.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {concepts.map(concept => (
+                            <Dialog key={concept.id}>
+                                <DialogTrigger asChild>
+                                    <Card className="cursor-pointer hover:border-primary/50 transition-colors group">
+                                        <CardHeader>
+                                            <CardTitle className="truncate flex items-center gap-2"><Zap className="w-5 h-5 text-primary"/> {concept.title}</CardTitle>
+                                            <CardDescription>
+                                                Saved {formatDistanceToNow(concept.createdAt.toDate(), { addSuffix: true })} for "{concept.niche}"
+                                            </CardDescription>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <p className="text-sm text-muted-foreground line-clamp-3">{concept.coreValue}</p>
+                                        </CardContent>
+                                        <CardFooter>
+                                            <Badge variant="secondary">{concept.format}</Badge>
+                                        </CardFooter>
+                                    </Card>
+                                </DialogTrigger>
+                                <DialogContent className="max-w-3xl">
+                                    <DialogHeader>
+                                        <DialogTitle className="flex items-center gap-2"><Zap className="w-6 h-6 text-primary" /> {concept.title}</DialogTitle>
+                                        <DialogDescription>
+                                            Saved {formatDistanceToNow(concept.createdAt.toDate(), { addSuffix: true })}
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <ScrollArea className="max-h-[60vh] my-4 pr-4">
+                                        <div className="space-y-4">
+                                            <DetailItem icon={<Lightbulb className="w-4 h-4 text-primary"/>} title="The Hook (First 15s)">
+                                                <span className="italic">"{concept.hook}"</span>
+                                            </DetailItem>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <DetailItem icon={<Target className="w-4 h-4 text-primary"/>} title="Core Value">{concept.coreValue}</DetailItem>
+                                                <DetailItem icon={<TrendingUp className="w-4 h-4 text-primary"/>} title="Video Format">{concept.format}</DetailItem>
+                                                <DetailItem icon={<Sparkles className="w-4 h-4 text-primary"/>} title="Uniqueness">{concept.uniqueness}</DetailItem>
+                                                <DetailItem icon={<DollarSign className="w-4 h-4 text-primary"/>} title="Monetization Angle">{concept.monetizationAngle}</DetailItem>
+                                            </div>
+                                        </div>
+                                    </ScrollArea>
+                                    <DialogFooter>
+                                        <DialogClose asChild><Button variant="outline">Close</Button></DialogClose>
+                                        <Button onClick={() => handleCopy(JSON.stringify(concept, null, 2), "Concept Details")}>
+                                            <Copy className="mr-2 h-4 w-4" /> Copy Details
+                                        </Button>
+                                    </DialogFooter>
+                                </DialogContent>
+                            </Dialog>
+                        ))}
+                    </div>
+                ) : (
+                     <div className="flex flex-col items-center justify-center text-center p-12 border-2 border-dashed rounded-lg">
+                        <Zap className="h-12 w-12 text-muted-foreground mb-4" />
+                        <h3 className="text-xl font-semibold">No Saved Strategies Yet</h3>
+                        <p className="text-muted-foreground mt-2">
+                           Visit the <a href="/viral-video-strategist" className="text-primary underline">Viral Video Strategist</a> to generate and save your first concept.
                         </p>
                     </div>
                 )}

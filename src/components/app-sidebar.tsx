@@ -44,6 +44,7 @@ import {
   Video,
   Library,
   Rocket,
+  Zap,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
@@ -61,6 +62,7 @@ const strategySuite = [
 ];
 
 const youtubeSuite = [
+    { href: "/viral-video-strategist", label: "Viral Video Strategist", icon: Zap },
     { href: "/youtube-script", label: "Script Generator", icon: Youtube },
     { href: "/youtube-title", label: "Title Generator", icon: Type },
     { href: "/youtube-description", label: "Description Generator", icon: FileText },
