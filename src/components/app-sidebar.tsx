@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -38,6 +39,7 @@ import {
   Loader2,
   User,
   Palette,
+  BrainCircuit,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
@@ -46,6 +48,10 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 
 const mainNav = [
   { href: "/", label: "Dashboard", icon: LayoutGrid },
+];
+
+const strategySuite = [
+    { href: "/content-strategist", label: "Content Strategist", icon: BrainCircuit },
 ];
 
 const youtubeSuite = [
@@ -149,6 +155,18 @@ export function AppSidebar() {
                   </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
+          ))}
+          <SidebarSeparator className="my-2" />
+           <SidebarGroupLabel className="px-2">Strategy</SidebarGroupLabel>
+          {strategySuite.map((link) => (
+              <SidebarMenuItem key={link.label}>
+                  <SidebarMenuButton asChild isActive={isActive(link.href)} tooltip={link.label}>
+                  <Link href={link.href} className="flex items-center gap-3">
+                      <link.icon className="shrink-0" />
+                      <span>{link.label}</span>
+                  </Link>
+                  </SidebarMenuButton>
+              </SidebarMenuItem>
           ))}
           <SidebarSeparator className="my-2" />
           <SidebarGroupLabel className="px-2">YouTube Suite</SidebarGroupLabel>

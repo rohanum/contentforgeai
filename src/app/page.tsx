@@ -21,8 +21,13 @@ import {
   ListOrdered,
   Captions,
   Palette,
+  BrainCircuit,
 } from "lucide-react";
 import { motion } from "framer-motion";
+
+const strategyTools = [
+  { href: "/content-strategist", title: "Content Strategist", description: "Generate a complete content plan from a simple goal.", icon: BrainCircuit, imageUrl: "https://placehold.co/500x300.png", dataAiHint: "glowing brain network" },
+]
 
 const youtubeTools = [
   { href: "/youtube-script", title: "YouTube Script Generator", description: "Generate full video scripts from a simple topic or idea.", icon: Youtube, imageUrl: "https://placehold.co/500x300.png", dataAiHint: "holographic script" },
@@ -56,7 +61,7 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
+      staggerChildren: 0.05,
       delayChildren: 0.3,
     },
   },
@@ -77,12 +82,12 @@ const itemVariants = {
 };
 
 export default function DashboardPage() {
-  const renderToolSection = (title: string, tools: any[]) => (
+  const renderToolSection = (title: string, tools: any[], delay: number = 0.2) => (
     <section className="mb-20">
       <motion.h2 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2, duration: 0.5 }}
+        transition={{ delay: delay, duration: 0.5 }}
         className="text-4xl font-bold mb-8 bg-gradient-to-br from-white to-gray-400 bg-clip-text text-transparent">{title}</motion.h2>
       <motion.div
         variants={containerVariants}
@@ -121,9 +126,10 @@ export default function DashboardPage() {
           className="text-muted-foreground mt-4 text-lg md:text-xl max-w-3xl mx-auto">Your all-in-one AI toolkit for creating stunning content that captivates, engages, and converts.</motion.p>
       </header>
       <main>
-        {renderToolSection("YouTube Suite", youtubeTools)}
-        {renderToolSection("Social Media Suite", socialTools)}
-        {renderToolSection("Utilities", utilityTools)}
+        {renderToolSection("Strategy Suite", strategyTools, 0.4)}
+        {renderToolSection("YouTube Suite", youtubeTools, 0.5)}
+        {renderToolSection("Social Media Suite", socialTools, 0.6)}
+        {renderToolSection("Utilities", utilityTools, 0.7)}
       </main>
     </div>
   );
