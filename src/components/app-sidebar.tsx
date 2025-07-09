@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   Sidebar,
   SidebarHeader,
+  SidebarContent,
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
@@ -135,54 +136,56 @@ export function AppSidebar() {
             <span className="text-xl font-bold tracking-wide">ContentForge</span>
         </Link>
       </SidebarHeader>
-      <SidebarMenu className="flex-1 px-2">
-        {mainNav.map((link) => (
-          <SidebarMenuItem key={link.label}>
-            <SidebarMenuButton asChild isActive={isActive(link.href)} tooltip={link.label} size="lg">
-                <Link href={link.href} className="flex items-center gap-3">
-                    <link.icon className="shrink-0" />
-                    <span>{link.label}</span>
-                </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        ))}
-        <SidebarSeparator className="my-2" />
-        <SidebarGroupLabel className="px-2">YouTube Suite</SidebarGroupLabel>
-        {youtubeSuite.map((link) => (
+      <SidebarContent>
+        <SidebarMenu className="px-2">
+          {mainNav.map((link) => (
             <SidebarMenuItem key={link.label}>
-                <SidebarMenuButton asChild isActive={isActive(link.href)} tooltip={link.label}>
-                <Link href={link.href} className="flex items-center gap-3">
-                    <link.icon className="shrink-0" />
-                    <span>{link.label}</span>
-                </Link>
-                </SidebarMenuButton>
+              <SidebarMenuButton asChild isActive={isActive(link.href)} tooltip={link.label} size="lg">
+                  <Link href={link.href} className="flex items-center gap-3">
+                      <link.icon className="shrink-0" />
+                      <span>{link.label}</span>
+                  </Link>
+              </SidebarMenuButton>
             </SidebarMenuItem>
-        ))}
-        <SidebarSeparator className="my-2" />
-        <SidebarGroupLabel className="px-2">Social Suite</SidebarGroupLabel>
-        {socialSuite.map((link) => (
-            <SidebarMenuItem key={link.label}>
-                <SidebarMenuButton asChild isActive={isActive(link.href)} tooltip={link.label}>
-                <Link href={link.href} className="flex items-center gap-3">
-                    <link.icon className="shrink-0" />
-                    <span>{link.label}</span>
-                </Link>
-                </SidebarMenuButton>
-            </SidebarMenuItem>
-        ))}
-        <SidebarSeparator className="my-2" />
-        <SidebarGroupLabel className="px-2">Utilities</SidebarGroupLabel>
-        {utilities.map((link) => (
-            <SidebarMenuItem key={link.label}>
-                <SidebarMenuButton asChild isActive={isActive(link.href)} tooltip={link.label}>
-                <Link href={link.href} className="flex items-center gap-3">
-                    <link.icon className="shrink-0" />
-                    <span>{link.label}</span>
-                </Link>
-                </SidebarMenuButton>
-            </SidebarMenuItem>
-        ))}
-      </SidebarMenu>
+          ))}
+          <SidebarSeparator className="my-2" />
+          <SidebarGroupLabel className="px-2">YouTube Suite</SidebarGroupLabel>
+          {youtubeSuite.map((link) => (
+              <SidebarMenuItem key={link.label}>
+                  <SidebarMenuButton asChild isActive={isActive(link.href)} tooltip={link.label}>
+                  <Link href={link.href} className="flex items-center gap-3">
+                      <link.icon className="shrink-0" />
+                      <span>{link.label}</span>
+                  </Link>
+                  </SidebarMenuButton>
+              </SidebarMenuItem>
+          ))}
+          <SidebarSeparator className="my-2" />
+          <SidebarGroupLabel className="px-2">Social Suite</SidebarGroupLabel>
+          {socialSuite.map((link) => (
+              <SidebarMenuItem key={link.label}>
+                  <SidebarMenuButton asChild isActive={isActive(link.href)} tooltip={link.label}>
+                  <Link href={link.href} className="flex items-center gap-3">
+                      <link.icon className="shrink-0" />
+                      <span>{link.label}</span>
+                  </Link>
+                  </SidebarMenuButton>
+              </SidebarMenuItem>
+          ))}
+          <SidebarSeparator className="my-2" />
+          <SidebarGroupLabel className="px-2">Utilities</SidebarGroupLabel>
+          {utilities.map((link) => (
+              <SidebarMenuItem key={link.label}>
+                  <SidebarMenuButton asChild isActive={isActive(link.href)} tooltip={link.label}>
+                  <Link href={link.href} className="flex items-center gap-3">
+                      <link.icon className="shrink-0" />
+                      <span>{link.label}</span>
+                  </Link>
+                  </SidebarMenuButton>
+              </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
+      </SidebarContent>
       <SidebarFooter>
         <UserProfile />
       </SidebarFooter>
