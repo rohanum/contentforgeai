@@ -29,11 +29,6 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 
-const strategyTools = [
-  { href: "/content-strategist", title: "Content Strategist", description: "Generate a complete content plan from a simple goal.", icon: BrainCircuit, imageUrl: "https://placehold.co/500x300.png", dataAiHint: "glowing brain network" },
-  { href: "/launch-campaign", title: "Launch Campaign Generator", description: "Generate a multi-channel marketing campaign for a product launch.", icon: Rocket, imageUrl: "https://placehold.co/500x300.png", dataAiHint: "launch rocket space" },
-]
-
 const youtubeTools = [
   { href: "/viral-video-strategist", title: "Viral Video Strategist", description: "Get AI-powered strategic blueprints for your next hit video.", icon: Zap, imageUrl: "https://placehold.co/500x300.png", dataAiHint: "lightning analytics" },
   { href: "/youtube-script", title: "YouTube Script Generator", description: "Generate full video scripts from a simple topic or idea.", icon: Youtube, imageUrl: "https://placehold.co/500x300.png", dataAiHint: "holographic script" },
@@ -134,7 +129,6 @@ export default function DashboardPage() {
           className="text-muted-foreground mt-4 text-lg md:text-xl max-w-3xl mx-auto">Your all-in-one AI toolkit for creating stunning content that captivates, engages, and converts.</motion.p>
       </header>
       <main>
-        {renderToolSection("Strategy Suite", strategyTools, 0.4)}
         {renderToolSection("YouTube Suite", youtubeTools, 0.5)}
         {renderToolSection("Social Media Suite", socialTools, 0.6)}
         {renderToolSection("Utilities", utilityTools, 0.7)}

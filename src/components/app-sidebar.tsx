@@ -56,11 +56,6 @@ const mainNav = [
   { href: "/my-content", label: "Content Library", icon: Library },
 ];
 
-const strategySuite = [
-    { href: "/content-strategist", label: "Content Strategist", icon: BrainCircuit },
-    { href: "/launch-campaign", label: "Launch Campaign", icon: Rocket },
-];
-
 const youtubeSuite = [
     { href: "/viral-video-strategist", label: "Viral Video Strategist", icon: Zap },
     { href: "/youtube-script", label: "Script Generator", icon: Youtube },
@@ -84,6 +79,8 @@ const socialSuite = [
 ];
 
 const utilities = [
+  { href: "/content-strategist", label: "Content Strategist", icon: BrainCircuit },
+  { href: "/launch-campaign", label: "Launch Campaign", icon: Rocket },
   { href: "/voiceover-generator", label: "Voiceover Generator", icon: Mic2 },
   { href: "/content-planner", label: "Content Planner", icon: Calendar },
   { href: "/brand-kit", label: "Brand Kit", icon: Palette },
@@ -165,18 +162,6 @@ export function AppSidebar() {
                   </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
-          ))}
-          <SidebarSeparator className="my-2" />
-           <SidebarGroupLabel className="px-2">Strategy</SidebarGroupLabel>
-          {strategySuite.map((link) => (
-              <SidebarMenuItem key={link.label}>
-                  <SidebarMenuButton asChild isActive={isActive(link.href)} tooltip={link.label}>
-                  <Link href={link.href} className="flex items-center gap-3">
-                      <link.icon className="shrink-0" />
-                      <span>{link.label}</span>
-                  </Link>
-                  </SidebarMenuButton>
-              </SidebarMenuItem>
           ))}
           <SidebarSeparator className="my-2" />
           <SidebarGroupLabel className="px-2">YouTube Suite</SidebarGroupLabel>
