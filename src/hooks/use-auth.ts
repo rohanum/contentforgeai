@@ -30,36 +30,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const { toast } = useToast();
-
-  useEffect(() => {
-    // This listener handles session persistence
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
-    });
-
-    // This handles the result after a sign-in redirect
-    getRedirectResult(auth)
-      .then((result) => {
-        if (result) {
-          // Successfully signed in.
-          setUser(result.user);
-          router.push('/');
-        }
-      })
-      .catch((error) => {
-        handleAuthError(error, 'Redirect');
-      })
-      .finally(() => {
-        // This is important to only set loading to false when we know
-        // there is no pending redirect.
-        if (!user) {
-          setLoading(false);
-        }
-      });
-
-    return () => unsubscribe();
-  }, [router]);
   
   const handleAuthError = (error: unknown, provider: string) => {
     console.error(`Error signing in with ${provider}: `, error);
@@ -92,25 +62,47 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
   }
 
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+      setLoading(false);
+    });
+
+    // This handles the result after a sign-in redirect has completed.
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result) {
+          // A user successfully signed in via redirect.
+          // The onAuthStateChanged listener above will handle setting user state.
+          // We just need to ensure the user is taken to the dashboard.
+          router.push('/');
+          toast({
+            title: "Welcome back!",
+            description: `You are now signed in as ${result.user.displayName || result.user.email}.`,
+          });
+        }
+      })
+      .catch((error) => {
+        handleAuthError(error, 'Redirect');
+      });
+
+    return () => unsubscribe();
+  }, [router, toast]);
+  
+
   const signInWithGoogle = async () => {
-    setLoading(true);
     try {
       await signInWithRedirect(auth, new GoogleAuthProvider());
-      // Firebase will handle the redirect away from the page.
     } catch (error) {
       handleAuthError(error, "Google");
-      setLoading(false);
     }
   };
   
   const signInWithGitHub = async () => {
-    setLoading(true);
     try {
       await signInWithRedirect(auth, new GithubAuthProvider());
-      // Firebase will handle the redirect away from the page.
     } catch (error) {
       handleAuthError(error, "GitHub");
-      setLoading(false);
     }
   };
 
