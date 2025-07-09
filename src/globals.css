@@ -87,6 +87,10 @@
     }
   }
 
+  .animated-gradient-border {
+    position: relative;
+    z-index: 0;
+  }
   .animated-gradient-border::before {
     content: "";
     position: absolute;
@@ -100,11 +104,15 @@
       hsl(var(--primary) / 0.8)
     );
     animation: border-spin 4s linear infinite;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
   }
   
-  .group:hover .animated-gradient-border::before {
+  .group:hover .animated-gradient-border::before,
+  .animated-gradient-border:hover::before {
     opacity: 1;
   }
+  
 
   @property --angle {
     syntax: "<angle>";
