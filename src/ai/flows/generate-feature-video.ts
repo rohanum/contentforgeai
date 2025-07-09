@@ -40,6 +40,7 @@ const StoryboardItemSchema = z.object({
   sceneDescription: z.string().describe('A detailed description of the visuals for this scene.'),
   textOverlay: z.string().optional().describe('Any on-screen text to display during this scene.'),
   sfx: z.string().optional().describe('Suggested sound effect for the scene.'),
+  visualHint: z.string().describe('A short, 1-2 word hint for a background visual, like "dashboard UI" or "glowing icon".')
 });
 
 const ScriptAndStoryboardSchema = z.object({
@@ -79,7 +80,7 @@ const scriptAndStoryboardPrompt = ai.definePrompt({
   
   Based on the inputs, generate the following:
   1.  **Script:** Write a clear, engaging, and persuasive script that explains the feature and its benefits. The script should match the requested video type and voice style. Structure it for a narrator to read.
-  2.  **Storyboard:** Create a detailed, shot-by-shot storyboard. For each scene, provide a timestamp, a visual description, any text overlays, and suggested sound effects. The storyboard should align perfectly with the script.
+  2.  **Storyboard:** Create a detailed, shot-by-shot storyboard. For each scene, provide a timestamp, a visual description, any text overlays, suggested sound effects, and a short 1-2 word \`visualHint\` for a background image (e.g., "dashboard UI"). The storyboard should align perfectly with the script.
   `,
 });
 
