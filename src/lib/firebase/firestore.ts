@@ -5,8 +5,7 @@ import {
   getDocs, 
   query, 
   where, 
-  Timestamp,
-  orderBy
+  Timestamp
 } from 'firebase/firestore';
 import { db } from './config';
 
@@ -29,11 +28,15 @@ export async function addContentIdea(idea: Omit<ContentIdea, 'id' | 'createdAt'>
 }
 
 export async function getContentIdeas(uid: string): Promise<ContentIdea[]> {
-  const q = query(ideasCollection, where('uid', '==', uid), orderBy('createdAt', 'desc'));
+  const q = query(ideasCollection, where('uid', '==', uid));
   const querySnapshot = await getDocs(q);
   const ideas: ContentIdea[] = [];
   querySnapshot.forEach((doc) => {
     ideas.push({ id: doc.id, ...doc.data() } as ContentIdea);
   });
+
+  // Sort client-side to avoid needing a composite index
+  ideas.sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis());
+  
   return ideas;
 }
