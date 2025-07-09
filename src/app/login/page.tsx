@@ -1,4 +1,4 @@
-// src/app/login/page.tsx
+
 "use client";
 
 import { useAuth } from "@/hooks/use-auth";
@@ -28,13 +28,14 @@ export default function LoginPage() {
   const router = useRouter();
 
   useEffect(() => {
+    // If we're done loading and the user is logged in, redirect to the dashboard.
     if (!loading && user) {
       router.push('/');
     }
   }, [user, loading, router]);
   
-  // While loading or if user is already logged in, show a loader to prevent flicker.
-  // This will cover the time during the redirect back to the app.
+  // While loading auth state or if user is logged in (and about to be redirected), 
+  // show a loader to prevent the login form from flashing.
   if (loading || user) {
     return (
         <div className="flex items-center justify-center h-screen">
@@ -47,7 +48,6 @@ export default function LoginPage() {
   return (
     <div className="flex items-center justify-center min-h-screen p-4">
       <Card className="w-full max-w-md shadow-2xl shadow-primary/20 animated-gradient-border">
-      <div className="relative z-0">
         <CardHeader className="text-center">
           <div className="mx-auto bg-gradient-to-br from-primary to-purple-400 rounded-lg p-3 inline-block glow-primary mb-4">
             <Bot size={32} className="text-primary-foreground" />
@@ -75,7 +75,6 @@ export default function LoginPage() {
             {loading ? <Loader2 className="animate-spin" /> : <><GitHubIcon /> <span className="ml-2">Sign in with GitHub</span></>}
           </Button>
         </CardContent>
-        </div>
       </Card>
     </div>
   );

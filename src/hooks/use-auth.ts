@@ -1,5 +1,5 @@
+
 'use client';
-// src/hooks/use-auth.ts
 import React, { useState, useEffect, useContext, createContext, ReactNode } from 'react';
 import { 
   User, 
@@ -74,7 +74,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (result) {
           // A user successfully signed in via redirect.
           // The onAuthStateChanged listener above will handle setting user state.
-          // We just need to ensure the user is taken to the dashboard.
           router.push('/');
           toast({
             title: "Welcome back!",
@@ -91,18 +90,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   
 
   const signInWithGoogle = async () => {
+    setLoading(true);
     try {
       await signInWithRedirect(auth, new GoogleAuthProvider());
     } catch (error) {
       handleAuthError(error, "Google");
+      setLoading(false);
     }
   };
   
   const signInWithGitHub = async () => {
+    setLoading(true);
     try {
       await signInWithRedirect(auth, new GithubAuthProvider());
     } catch (error) {
       handleAuthError(error, "GitHub");
+      setLoading(false);
     }
   };
 
