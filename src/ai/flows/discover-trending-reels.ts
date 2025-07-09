@@ -16,13 +16,15 @@ const DiscoverTrendingReelsInputSchema = z.object({
 });
 export type DiscoverTrendingReelsInput = z.infer<typeof DiscoverTrendingReelsInputSchema>;
 
-const TrendSchema = z.object({
+export const TrendSchema = z.object({
     title: z.string().describe('The title or name of the trending audio or reel format.'),
     reason: z.string().describe("A brief explanation of why this is currently trending."),
     contentSuggestion: z.string().describe("A specific content idea for the user's topic using this trend."),
     popularity: z.enum(['Very Hot', 'Gaining Momentum', 'Niche-Specific']).describe("An assessment of the trend's current popularity: 'Very Hot' for viral trends, 'Gaining Momentum' for rising trends, or 'Niche-Specific' for trends popular within a certain community."),
     suggestedCTA: z.string().describe("A specific call-to-action to encourage audience engagement with the reel."),
 });
+export type Trend = z.infer<typeof TrendSchema>;
+
 
 const DiscoverTrendingReelsOutputSchema = z.object({
   trends: z.array(TrendSchema).describe('An array of 3-5 trending reels with content suggestions.'),

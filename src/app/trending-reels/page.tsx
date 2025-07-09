@@ -1,17 +1,20 @@
+
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { discoverTrendingReels, DiscoverTrendingReelsOutput } from "@/ai/flows/discover-trending-reels";
+import { discoverTrendingReels, DiscoverTrendingReelsOutput, Trend } from "@/ai/flows/discover-trending-reels";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/use-auth";
+import { saveTrend, getSavedTrends } from "@/lib/firebase/trends";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Loader2, Flame, Copy, Lightbulb, Megaphone, Bookmark, PenSquare } from "lucide-react";
+import { Loader2, Flame, Copy, Lightbulb, Megaphone, Bookmark, PenSquare, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 
@@ -30,6 +33,10 @@ export default function TrendingReelsPage() {
   const [output, setOutput] = useState<DiscoverTrendingReelsOutput | null>(null);
   const { toast } = useToast();
   const router = useRouter();
+  const { user } = useAuth();
+  
+  const [savingTrendTitle, setSavingTrendTitle] = useState<string | null>(null);
+  const [savedTrendTitles, setSavedTrendTitles] = useState<Set<string>>(new Set());
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -37,6 +44,14 @@ export default function TrendingReelsPage() {
       topic: "",
     },
   });
+
+   useEffect(() => {
+    if (user) {
+      getSavedTrends(user.uid).then(trends => {
+        setSavedTrendTitles(new Set(trends.map(t => t.title)));
+      });
+    }
+  }, [user]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
@@ -67,6 +82,31 @@ export default function TrendingReelsPage() {
       description: "Content suggestion copied to clipboard.",
     });
   };
+  
+  const handleSaveTrend = async (trend: Trend) => {
+    if (!user) {
+      toast({ title: "Please log in", description: "You need to be logged in to save trends.", variant: "destructive"});
+      return;
+    }
+    setSavingTrendTitle(trend.title);
+    try {
+      await saveTrend({
+        uid: user.uid,
+        title: trend.title,
+        reason: trend.reason,
+        contentSuggestion: trend.contentSuggestion,
+        popularity: trend.popularity,
+        suggestedCTA: trend.suggestedCTA,
+      });
+      setSavedTrendTitles(prev => new Set(prev).add(trend.title));
+      toast({ title: "Trend Saved!", description: "You can find it in your Content Library." });
+    } catch (error) {
+      console.error(error);
+      toast({ title: "Save Failed", description: "There was an error saving this trend.", variant: "destructive" });
+    } finally {
+      setSavingTrendTitle(null);
+    }
+  }
 
   const handleTurnIntoScript = (idea: string) => {
     router.push(`/reel-script?topic=${encodeURIComponent(idea)}`);
@@ -123,6 +163,8 @@ export default function TrendingReelsPage() {
             <div className="space-y-4 max-h-[calc(100vh-12rem)] overflow-y-auto pr-2">
                 {output.trends.map((trend, index) => {
                 const popularityInfo = popularityMap[trend.popularity] || { icon: '🤔', text: 'Unknown', className: 'text-muted-foreground' };
+                const isSaved = savedTrendTitles.has(trend.title);
+                const isSaving = savingTrendTitle === trend.title;
                 return (
                     <Card key={index} className="bg-card">
                     <CardHeader>
@@ -160,9 +202,9 @@ export default function TrendingReelsPage() {
                         </div>
                     </CardContent>
                     <CardFooter className="flex flex-wrap gap-2">
-                        <Button variant="outline" size="sm" disabled>
-                            <Bookmark className="mr-2 h-4 w-4" />
-                            Save Trend
+                        <Button variant="outline" size="sm" onClick={() => handleSaveTrend(trend)} disabled={isSaving || isSaved}>
+                           {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : isSaved ? <Check className="mr-2 h-4 w-4" /> : <Bookmark className="mr-2 h-4 w-4" />}
+                           {isSaving ? 'Saving...' : isSaved ? 'Saved' : 'Save Trend'}
                         </Button>
                         <Button size="sm" onClick={() => handleTurnIntoScript(trend.contentSuggestion)}>
                             <PenSquare className="mr-2 h-4 w-4" />
