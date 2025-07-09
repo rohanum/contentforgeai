@@ -55,8 +55,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         case 'auth/account-exists-with-different-credential':
           description = "An account already exists with this email using a different sign-in method.";
           break;
+        case 'auth/unauthorized-domain':
+          description = "This domain is not authorized. Please add it to your Firebase project's authorized domains list.";
+          break;
         default:
-          description = `Sign-in failed. Please try again.`;
+          description = `Sign-in failed. Please try again. (${authError.code})`;
       }
     }
     
