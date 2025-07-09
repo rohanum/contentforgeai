@@ -10,7 +10,7 @@
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 
-export const GenerateThumbnailImageInputSchema = z.object({
+const GenerateThumbnailImageInputSchema = z.object({
   topic: z.string().describe('The topic or title of the YouTube video.'),
   style: z
     .string()
@@ -22,7 +22,7 @@ export type GenerateThumbnailImageInput = z.infer<
   typeof GenerateThumbnailImageInputSchema
 >;
 
-export const GenerateThumbnailImageOutputSchema = z.object({
+const GenerateThumbnailImageOutputSchema = z.object({
   images: z
     .array(
       z
