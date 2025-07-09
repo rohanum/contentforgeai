@@ -5,7 +5,8 @@ import {
   User, 
   GoogleAuthProvider, 
   GithubAuthProvider,
-  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   signOut as firebaseSignOut,
   onAuthStateChanged,
   AuthError
@@ -31,13 +32,34 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { toast } = useToast();
 
   useEffect(() => {
+    // This listener handles session persistence
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);
     });
 
+    // This handles the result after a sign-in redirect
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result) {
+          // Successfully signed in.
+          setUser(result.user);
+          router.push('/');
+        }
+      })
+      .catch((error) => {
+        handleAuthError(error, 'Redirect');
+      })
+      .finally(() => {
+        // This is important to only set loading to false when we know
+        // there is no pending redirect.
+        if (!user) {
+          setLoading(false);
+        }
+      });
+
     return () => unsubscribe();
-  }, []);
+  }, [router]);
   
   const handleAuthError = (error: unknown, provider: string) => {
     console.error(`Error signing in with ${provider}: `, error);
@@ -73,11 +95,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signInWithGoogle = async () => {
     setLoading(true);
     try {
-      await signInWithPopup(auth, new GoogleAuthProvider());
-      router.push('/');
+      await signInWithRedirect(auth, new GoogleAuthProvider());
+      // Firebase will handle the redirect away from the page.
     } catch (error) {
       handleAuthError(error, "Google");
-    } finally {
       setLoading(false);
     }
   };
@@ -85,11 +106,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signInWithGitHub = async () => {
     setLoading(true);
     try {
-      await signInWithPopup(auth, new GithubAuthProvider());
-      router.push('/');
+      await signInWithRedirect(auth, new GithubAuthProvider());
+      // Firebase will handle the redirect away from the page.
     } catch (error) {
       handleAuthError(error, "GitHub");
-    } finally {
       setLoading(false);
     }
   };
