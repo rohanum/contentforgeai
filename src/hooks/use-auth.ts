@@ -27,8 +27,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
-  const { toast } = useToast();
   
   const handleAuthError = (error: unknown, provider: string) => {
     console.error(`Error signing in with ${provider}: `, error);
@@ -41,7 +39,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           description = "Sign-in failed. Your Firebase API Key is invalid. Please check your .env file.";
           break;
         case 'auth/popup-closed-by-user':
-          description = "Sign-in was cancelled.";
+          description = "Sign-in was cancelled by the user.";
           break;
         case 'auth/account-exists-with-different-credential':
           description = "An account already exists with this email using a different sign-in method.";
@@ -62,33 +60,35 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }
 
   useEffect(() => {
-    // This handles the result after a sign-in redirect has completed.
+    // onAuthStateChanged is the most reliable way to get the user's state.
+    // It returns an unsubscribe function that we will call on cleanup.
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+      setLoading(false);
+    });
+    
+    // Check for a redirect result. This is separate from the listener.
+    // We don't need to do anything with the user object here, 
+    // because onAuthStateChanged will fire and handle it.
+    // We just need to catch and handle potential errors.
     getRedirectResult(auth)
       .then((result) => {
         if (result) {
-          // A user successfully signed in via redirect.
-          router.push('/');
           toast({
-            title: "Welcome back!",
-            description: `You are now signed in as ${result.user.displayName || result.user.email}.`,
+            title: "Welcome!",
+            description: "You have successfully signed in.",
           });
         }
       })
       .catch((error) => {
-        handleAuthError(error, 'Redirect');
-      })
-      .finally(() => {
-        // Set up the listener *after* handling the redirect.
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-          setUser(user);
-          setLoading(false);
-        });
+        // Don't show a big error toast if the user simply closed the popup.
+        if (error.code !== 'auth/popup-closed-by-user') {
+          handleAuthError(error, 'Redirect');
+        }
+    });
 
-        // Cleanup the listener on component unmount.
-        return () => unsubscribe();
-      });
-  // The empty dependency array is crucial here. 
-  // It ensures this effect runs only once when the provider mounts.
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
   }, []);
   
 
@@ -114,8 +114,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signOut = async () => {
     await firebaseSignOut(auth);
-    setUser(null);
-    router.push('/login');
+    // The onAuthStateChanged listener will automatically set user to null.
   };
 
   const value = { user, loading, signInWithGoogle, signInWithGitHub, signOut };

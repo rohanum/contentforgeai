@@ -24,18 +24,19 @@ const GitHubIcon = () => (
 );
 
 export default function LoginPage() {
-  const { user, loading, signInWithGoogle, signInWithGitHub } = useAuth();
+  const { user, loading, signInWithGoogle, signInWithGitHub, signOut } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    // If we're done loading and the user is logged in, redirect to the dashboard.
+    // If auth is no longer loading and a user is found, redirect to the dashboard.
     if (!loading && user) {
       router.push('/');
     }
   }, [user, loading, router]);
   
-  // While loading auth state or if user is logged in (and about to be redirected), 
-  // show a loader to prevent the login form from flashing.
+  // While loading the initial auth state, or if the user is logged in
+  // (and about to be redirected), show a full-screen loader.
+  // This prevents the login form from flashing.
   if (loading || user) {
     return (
         <div className="flex items-center justify-center h-screen">
@@ -44,7 +45,7 @@ export default function LoginPage() {
     );
   }
 
-  // Only show the login form if not loading and no user is present.
+  // If not loading and no user, show the login form.
   return (
     <div className="flex items-center justify-center min-h-screen p-4 group">
       <Card className="w-full max-w-md shadow-2xl shadow-primary/20 animated-gradient-border">
@@ -62,17 +63,15 @@ export default function LoginPage() {
             variant="outline"
             className="w-full h-12 text-base"
             onClick={signInWithGoogle}
-            disabled={loading}
           >
-            {loading ? <Loader2 className="animate-spin" /> : <><GoogleIcon /> <span className="ml-2">Sign in with Google</span></>}
+            <GoogleIcon /> <span className="ml-2">Sign in with Google</span>
           </Button>
           <Button
             variant="outline"
             className="w-full h-12 text-base"
             onClick={signInWithGitHub}
-            disabled={loading}
           >
-            {loading ? <Loader2 className="animate-spin" /> : <><GitHubIcon /> <span className="ml-2">Sign in with GitHub</span></>}
+            <GitHubIcon /> <span className="ml-2">Sign in with GitHub</span>
           </Button>
         </CardContent>
       </Card>

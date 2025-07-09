@@ -77,6 +77,11 @@ export function AppSidebar() {
   const { user, loading, signOut } = useAuth();
   const isActive = (href: string) => pathname === href;
 
+  const handleSignOut = async () => {
+    await signOut();
+    router.push('/login');
+  };
+
   const renderLinks = (links: typeof youtubeSuite) => links.map((link) => (
     <SidebarMenuItem key={link.label}>
         <SidebarMenuButton asChild isActive={isActive(link.href)} tooltip={link.label}>
@@ -114,7 +119,7 @@ export function AppSidebar() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent side="top" align="end">
-              <DropdownMenuItem onClick={signOut}>
+              <DropdownMenuItem onClick={handleSignOut}>
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Sign Out</span>
               </DropdownMenuItem>
