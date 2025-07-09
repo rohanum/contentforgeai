@@ -1,4 +1,3 @@
-
 'use client';
 import React, { useState, useEffect, useContext, createContext, ReactNode } from 'react';
 import { 
@@ -63,17 +62,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
-    });
-
     // This handles the result after a sign-in redirect has completed.
     getRedirectResult(auth)
       .then((result) => {
         if (result) {
           // A user successfully signed in via redirect.
-          // The onAuthStateChanged listener above will handle setting user state.
           router.push('/');
           toast({
             title: "Welcome back!",
@@ -83,10 +76,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       })
       .catch((error) => {
         handleAuthError(error, 'Redirect');
-      });
+      })
+      .finally(() => {
+        // Set up the listener *after* handling the redirect.
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+          setUser(user);
+          setLoading(false);
+        });
 
-    return () => unsubscribe();
-  }, [router, toast]);
+        // Cleanup the listener on component unmount.
+        return () => unsubscribe();
+      });
+  // The empty dependency array is crucial here. 
+  // It ensures this effect runs only once when the provider mounts.
+  }, []);
   
 
   const signInWithGoogle = async () => {
