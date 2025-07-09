@@ -6,8 +6,11 @@ import {
   GoogleAuthProvider, 
   GithubAuthProvider,
   signInWithRedirect,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
   signOut as firebaseSignOut,
   onAuthStateChanged,
+  getRedirectResult,
   AuthError
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase/config';
@@ -18,6 +21,8 @@ interface AuthContextType {
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
   signInWithGitHub: () => Promise<void>;
+  signInWithEmail: (email: string, pass: string) => Promise<void>;
+  signUpWithEmail: (email: string, pass: string) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -29,29 +34,39 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { toast } = useToast();
   
   const handleAuthError = (error: unknown, provider: string) => {
-    console.error(`Error signing in with ${provider}: `, error);
-    let description = "An unknown error occurred during sign-in.";
+    console.error(`Error with ${provider}: `, error);
+    let description = "An unknown error occurred.";
     
     if (error instanceof Error) {
       const authError = error as AuthError;
       switch (authError.code) {
         case 'auth/popup-closed-by-user':
-          // This is a common case, we can handle it silently or with a mild notification
+        case 'auth/cancelled-popup-request':
           description = "Sign-in was cancelled.";
           break;
         case 'auth/account-exists-with-different-credential':
           description = "An account already exists with this email using a different sign-in method.";
           break;
         case 'auth/unauthorized-domain':
-          description = "This domain is not authorized. Please add it to your Firebase project's authorized domains list.";
+          description = "This domain is not authorized. Please check your Firebase project settings.";
           break;
+        case 'auth/user-not-found':
+        case 'auth/wrong-password':
+            description = "Invalid email or password. Please try again.";
+            break;
+        case 'auth/email-already-in-use':
+            description = "An account with this email already exists.";
+            break;
+        case 'auth/weak-password':
+            description = "The password is too weak. Please choose a stronger password.";
+            break;
         default:
-          description = `Sign-in failed. Please try again. (${authError.code})`;
+          description = `An error occurred. Please try again. (${authError.code})`;
       }
     }
     
     toast({
-      title: "Sign-in Failed",
+      title: `${provider} Failed`,
       description: description,
       variant: "destructive",
     });
@@ -62,8 +77,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(user);
       setLoading(false);
     });
+    
+    // Handle redirect result
+    getRedirectResult(auth)
+      .catch((error) => {
+        handleAuthError(error, 'Redirect Sign-In');
+      });
 
-    // Cleanup subscription on unmount
     return () => unsubscribe();
   }, []);
   
@@ -73,7 +93,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       await signInWithRedirect(auth, new GoogleAuthProvider());
     } catch (error) {
-      handleAuthError(error, "Google");
+      handleAuthError(error, "Google Sign-In");
       setLoading(false);
     }
   };
@@ -83,17 +103,41 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       await signInWithRedirect(auth, new GithubAuthProvider());
     } catch (error) {
-      handleAuthError(error, "GitHub");
+      handleAuthError(error, "GitHub Sign-In");
       setLoading(false);
     }
   };
 
-  const signOut = async () => {
-    await firebaseSignOut(auth);
-    setUser(null);
+  const signInWithEmail = async (email: string, pass: string) => {
+    setLoading(true);
+    try {
+        await signInWithEmailAndPassword(auth, email, pass);
+    } catch (error) {
+        handleAuthError(error, 'Email Sign-In');
+    } finally {
+        setLoading(false);
+    }
   };
 
-  const value = { user, loading, signInWithGoogle, signInWithGitHub, signOut };
+  const signUpWithEmail = async (email: string, pass: string) => {
+    setLoading(true);
+    try {
+        await createUserWithEmailAndPassword(auth, email, pass);
+    } catch (error) {
+        handleAuthError(error, 'Email Sign-Up');
+    } finally {
+        setLoading(false);
+    }
+  }
+
+  const signOut = async () => {
+    setLoading(true);
+    await firebaseSignOut(auth);
+    setUser(null);
+    setLoading(false);
+  };
+
+  const value = { user, loading, signInWithGoogle, signInWithGitHub, signInWithEmail, signUpWithEmail, signOut };
 
   return React.createElement(AuthContext.Provider, { value: value }, children);
 };

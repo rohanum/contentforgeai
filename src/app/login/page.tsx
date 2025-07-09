@@ -6,8 +6,19 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bot, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import Link from "next/link";
+import { Separator } from "@/components/ui/separator";
+
+const loginSchema = z.object({
+  email: z.string().email({ message: "Please enter a valid email." }),
+  password: z.string().min(6, { message: "Password must be at least 6 characters." }),
+});
 
 const GoogleIcon = () => (
   <svg className="h-5 w-5" viewBox="0 0 24 24">
@@ -25,8 +36,14 @@ const GitHubIcon = () => (
 );
 
 export default function LoginPage() {
-  const { user, loading, signInWithGoogle, signInWithGitHub } = useAuth();
+  const { user, loading, signInWithGoogle, signInWithGitHub, signInWithEmail } = useAuth();
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const form = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: '', password: '' },
+  });
 
   useEffect(() => {
     if (!loading && user) {
@@ -34,6 +51,12 @@ export default function LoginPage() {
     }
   }, [user, loading, router]);
   
+  async function onSubmit(values: z.infer<typeof loginSchema>) {
+    setIsSubmitting(true);
+    await signInWithEmail(values.email, values.password);
+    setIsSubmitting(false);
+  }
+
   if (loading || user) {
     return (
         <div className="flex items-center justify-center h-screen">
@@ -44,12 +67,7 @@ export default function LoginPage() {
   
   return (
     <div className="flex items-center justify-center min-h-screen p-4 group">
-       <div className="relative w-full max-w-md">
-         <div className={cn(
-            "absolute -inset-1 rounded-[calc(var(--radius)+2px)] z-[-1]",
-            "animated-gradient-border"
-         )} />
-         <Card className="w-full max-w-md shadow-2xl shadow-primary/20">
+       <Card className="w-full max-w-md shadow-2xl shadow-primary/20 animated-gradient-border">
           <CardHeader className="text-center">
             <div className="mx-auto bg-gradient-to-br from-primary to-purple-400 rounded-lg p-3 inline-block glow-primary mb-4">
               <Bot size={32} className="text-primary-foreground" />
@@ -60,10 +78,35 @@ export default function LoginPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input id="email" type="email" placeholder="m@example.com" {...form.register('email')} />
+                {form.formState.errors.email && <p className="text-sm text-destructive">{form.formState.errors.email.message}</p>}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input id="password" type="password" {...form.register('password')} />
+                {form.formState.errors.password && <p className="text-sm text-destructive">{form.formState.errors.password.message}</p>}
+              </div>
+              <Button type="submit" disabled={isSubmitting} className="w-full">
+                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Sign In with Email
+              </Button>
+            </form>
+
+            <div className="relative my-4">
+              <Separator />
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-2 bg-card text-muted-foreground text-sm">
+                OR CONTINUE WITH
+              </div>
+            </div>
+
             <Button
               variant="outline"
               className="w-full h-12 text-base"
               onClick={signInWithGoogle}
+              disabled={isSubmitting}
             >
               <GoogleIcon /> <span className="ml-2">Sign in with Google</span>
             </Button>
@@ -71,12 +114,18 @@ export default function LoginPage() {
               variant="outline"
               className="w-full h-12 text-base"
               onClick={signInWithGitHub}
+              disabled={isSubmitting}
             >
               <GitHubIcon /> <span className="ml-2">Sign in with GitHub</span>
             </Button>
+            <div className="text-center text-sm">
+                Don&apos;t have an account?{' '}
+                <Link href="/signup" className="underline text-primary">
+                    Sign up
+                </Link>
+            </div>
           </CardContent>
         </Card>
-      </div>
     </div>
   );
 }
