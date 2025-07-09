@@ -39,9 +39,13 @@ export default function ContentPlannerPage() {
 
   useEffect(() => {
     if (!loading && !user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to access your personal Content Planner.",
+      });
       router.push('/login');
     }
-  }, [user, loading, router]);
+  }, [user, loading, router, toast]);
   
   useEffect(() => {
     async function fetchIdeas() {
