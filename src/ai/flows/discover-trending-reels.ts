@@ -16,7 +16,7 @@ const DiscoverTrendingReelsInputSchema = z.object({
 });
 export type DiscoverTrendingReelsInput = z.infer<typeof DiscoverTrendingReelsInputSchema>;
 
-export const TrendSchema = z.object({
+const TrendSchema = z.object({
     title: z.string().describe('The title or name of the trending audio or reel format.'),
     reason: z.string().describe("A brief explanation of why this is currently trending."),
     contentSuggestion: z.string().describe("A specific content idea for the user's topic using this trend."),
