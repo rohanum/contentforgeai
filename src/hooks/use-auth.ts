@@ -5,12 +5,11 @@ import {
   User, 
   GoogleAuthProvider, 
   GithubAuthProvider,
-  signInWithRedirect,
+  signInWithPopup,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut as firebaseSignOut,
   onAuthStateChanged,
-  getRedirectResult,
   AuthError
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase/config';
@@ -77,64 +76,46 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(user);
       setLoading(false);
     });
-    
-    // Handle redirect result
-    getRedirectResult(auth)
-      .catch((error) => {
-        handleAuthError(error, 'Redirect Sign-In');
-      });
 
     return () => unsubscribe();
   }, []);
   
 
   const signInWithGoogle = async () => {
-    setLoading(true);
     try {
-      await signInWithRedirect(auth, new GoogleAuthProvider());
+      await signInWithPopup(auth, new GoogleAuthProvider());
     } catch (error) {
       handleAuthError(error, "Google Sign-In");
-      setLoading(false);
     }
   };
   
   const signInWithGitHub = async () => {
-    setLoading(true);
     try {
-      await signInWithRedirect(auth, new GithubAuthProvider());
+      await signInWithPopup(auth, new GithubAuthProvider());
     } catch (error) {
       handleAuthError(error, "GitHub Sign-In");
-      setLoading(false);
     }
   };
 
   const signInWithEmail = async (email: string, pass: string) => {
-    setLoading(true);
     try {
         await signInWithEmailAndPassword(auth, email, pass);
     } catch (error) {
         handleAuthError(error, 'Email Sign-In');
-    } finally {
-        setLoading(false);
     }
   };
 
   const signUpWithEmail = async (email: string, pass: string) => {
-    setLoading(true);
     try {
         await createUserWithEmailAndPassword(auth, email, pass);
     } catch (error) {
         handleAuthError(error, 'Email Sign-Up');
-    } finally {
-        setLoading(false);
     }
   }
 
   const signOut = async () => {
-    setLoading(true);
     await firebaseSignOut(auth);
     setUser(null);
-    setLoading(false);
   };
 
   const value = { user, loading, signInWithGoogle, signInWithGitHub, signInWithEmail, signUpWithEmail, signOut };
