@@ -29,13 +29,25 @@ const formSchema = z.object({
 type ParsedStoryboardItem = { start: number; end: number };
 
 const parseTimestamp = (timestamp: string): ParsedStoryboardItem => {
-    const parts = timestamp.split(' - ');
-    const [startMin, startSec] = parts[0].split(':').map(Number);
-    const [endMin, endSec] = parts[1].split(':').map(Number);
-    return {
-        start: startMin * 60 + startSec,
-        end: endMin * 60 + endSec,
-    };
+    try {
+        const parts = timestamp.split(' - ');
+        if (parts.length !== 2) return { start: 0, end: 0 };
+        
+        const [startMin, startSec] = parts[0].split(':').map(Number);
+        const [endMin, endSec] = parts[1].split(':').map(Number);
+        
+        if (isNaN(startMin) || isNaN(startSec) || isNaN(endMin) || isNaN(endSec)) {
+             return { start: 0, end: 0 };
+        }
+        
+        return {
+            start: startMin * 60 + startSec,
+            end: endMin * 60 + endSec,
+        };
+    } catch (error) {
+        console.error("Error parsing timestamp:", timestamp, error);
+        return { start: 0, end: 0 };
+    }
 };
 
 export default function FeatureToVideoPage() {
@@ -55,6 +67,7 @@ export default function FeatureToVideoPage() {
       setParsedStoryboard(output.storyboard.map(parseTimestamp));
       setCurrentSceneIndex(0);
       setCurrentTime(0);
+      setIsPlaying(false);
     }
   }, [output]);
 
@@ -63,36 +76,48 @@ export default function FeatureToVideoPage() {
     if (!audio) return;
 
     const timeUpdateHandler = () => {
-      setCurrentTime(audio.currentTime);
-      const newSceneIndex = parsedStoryboard.findIndex(
-        (scene) => audio.currentTime >= scene.start && audio.currentTime < scene.end
-      );
-      if (newSceneIndex !== -1 && newSceneIndex !== currentSceneIndex) {
-        setCurrentSceneIndex(newSceneIndex);
+      if (!audio.paused) {
+          setCurrentTime(audio.currentTime);
+          const newSceneIndex = parsedStoryboard.findIndex(
+            (scene) => audio.currentTime >= scene.start && audio.currentTime < scene.end
+          );
+          if (newSceneIndex !== -1 && newSceneIndex !== currentSceneIndex) {
+            setCurrentSceneIndex(newSceneIndex);
+          }
       }
     };
     const durationChangeHandler = () => setDuration(audio.duration);
-    const endedHandler = () => setIsPlaying(false);
+    const endedHandler = () => {
+        setIsPlaying(false);
+        setCurrentTime(0);
+        setCurrentSceneIndex(0);
+        audio.currentTime = 0;
+    };
+    const playHandler = () => setIsPlaying(true);
+    const pauseHandler = () => setIsPlaying(false);
 
     audio.addEventListener('timeupdate', timeUpdateHandler);
     audio.addEventListener('durationchange', durationChangeHandler);
     audio.addEventListener('ended', endedHandler);
+    audio.addEventListener('play', playHandler);
+    audio.addEventListener('pause', pauseHandler);
 
     return () => {
       audio.removeEventListener('timeupdate', timeUpdateHandler);
       audio.removeEventListener('durationchange', durationChangeHandler);
       audio.removeEventListener('ended', endedHandler);
+      audio.removeEventListener('play', playHandler);
+      audio.removeEventListener('pause', pauseHandler);
     };
   }, [parsedStoryboard, currentSceneIndex]);
 
   const togglePlayPause = () => {
     if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-      } else {
+      if (audioRef.current.paused) {
         audioRef.current.play();
+      } else {
+        audioRef.current.pause();
       }
-      setIsPlaying(!isPlaying);
     }
   };
   
@@ -125,7 +150,10 @@ export default function FeatureToVideoPage() {
     toast({ title: "Copied!", description: "Script has been copied to your clipboard." });
   };
   
-  const formatTime = (seconds: number) => new Date(seconds * 1000).toISOString().slice(14, 19);
+  const formatTime = (seconds: number) => {
+      if (isNaN(seconds) || seconds < 0) return "00:00";
+      return new Date(seconds * 1000).toISOString().slice(14, 19);
+  }
 
   const renderResults = () => {
     if (!output) return null;
@@ -204,7 +232,7 @@ export default function FeatureToVideoPage() {
             <CardHeader><CardTitle>Storyboard</CardTitle><CardDescription>Your shot-by-shot guide for video production.</CardDescription></CardHeader>
             <CardContent><div className="max-h-[calc(100vh-20rem)] overflow-y-auto pr-2"><Table>
               <TableHeader><TableRow><TableHead className="w-[100px]">Timestamp</TableHead><TableHead>Scene Description</TableHead><TableHead>Text Overlay</TableHead></TableRow></TableHeader>
-              <TableBody>{output.storyboard.map((shot, index) => (<TableRow key={index}><TableCell className="font-mono text-xs">{shot.timestamp}</TableCell><TableCell className="text-sm">{shot.sceneDescription}</TableCell><TableCell className="font-semibold italic">"{shot.textOverlay}"</TableCell></TableRow>))}</TableBody>
+              <TableBody>{output.storyboard.map((shot, index) => (<TableRow key={index}><TableCell className="font-mono text-xs">{shot.timestamp}</TableCell><TableCell className="text-sm">{shot.sceneDescription}</TableCell><TableCell className="font-semibold italic">{shot.textOverlay ? `"${shot.textOverlay}"` : '–'}</TableCell></TableRow>))}</TableBody>
             </Table></div></CardContent>
           </Card>
         </TabsContent>
