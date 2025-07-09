@@ -18,3 +18,4 @@ import '@/ai/flows/generate-voiceover.ts';
 import '@/ai/flows/discover-trending-reels.ts';
 import '@/ai/flows/generate-chapters.ts';
 import '@/ai/flows/generate-content-strategy.ts';
+import '@/ai/flows/generate-shorts-from-script.ts';
