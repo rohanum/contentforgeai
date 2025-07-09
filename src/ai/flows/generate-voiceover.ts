@@ -14,6 +14,7 @@ import wav from 'wav';
 
 const GenerateVoiceoverInputSchema = z.object({
   script: z.string().describe('The text to be converted to speech.'),
+  voice: z.string().optional().describe('The prebuilt voice to use for the voiceover.'),
 });
 export type GenerateVoiceoverInput = z.infer<typeof GenerateVoiceoverInputSchema>;
 
@@ -55,14 +56,14 @@ const generateVoiceoverFlow = ai.defineFlow(
     inputSchema: GenerateVoiceoverInputSchema,
     outputSchema: GenerateVoiceoverOutputSchema,
   },
-  async ({script}) => {
+  async ({script, voice}) => {
     const {media} = await ai.generate({
       model: googleAI.model('gemini-2.5-flash-preview-tts'),
       config: {
         responseModalities: ['AUDIO'],
         speechConfig: {
           voiceConfig: {
-            prebuiltVoiceConfig: {voiceName: 'Algenib'},
+            prebuiltVoiceConfig: {voiceName: voice || 'Algenib'},
           },
         },
       },

@@ -41,6 +41,7 @@ import {
   Palette,
   BrainCircuit,
   Film,
+  Video
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
@@ -81,6 +82,7 @@ const utilities = [
   { href: "/content-planner", label: "Content Planner", icon: Calendar },
   { href: "/brand-kit", label: "Brand Kit", icon: Palette },
   { href: "/script-to-shorts", label: "Content Repurposer", icon: Film },
+  { href: "/feature-to-video", label: "Feature to Video", icon: Video },
 ]
 
 export function AppSidebar() {
