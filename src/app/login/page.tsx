@@ -47,7 +47,7 @@ export default function LoginPage() {
   // Only show the login form if not loading and no user is present.
   return (
     <div className="flex items-center justify-center min-h-screen p-4">
-      <Card className="w-full max-w-md shadow-2xl shadow-primary/20 animated-gradient-border">
+      <Card className="w-full max-w-md shadow-2xl shadow-primary/20">
         <CardHeader className="text-center">
           <div className="mx-auto bg-gradient-to-br from-primary to-purple-400 rounded-lg p-3 inline-block glow-primary mb-4">
             <Bot size={32} className="text-primary-foreground" />
