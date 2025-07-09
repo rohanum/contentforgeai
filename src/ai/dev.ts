@@ -6,7 +6,7 @@ import '@/ai/flows/generate-seo-tags.ts';
 import '@/ai/flows/generate-youtube-title.ts';
 import '@/ai/flows/generate-youtube-description.ts';
 import '@/ai/flows/generate-instagram-story-flow.ts';
-import '@/ai/flows/generate-thumbnail-ideas.ts';
+import '@/ai/flows/generate-thumbnail-image.ts';
 import '@/ai/flows/generate-caption.ts';
 import '@/ai/flows/generate-video-ideas.ts';
 import '@/ai/flows/generate-hashtag.ts';

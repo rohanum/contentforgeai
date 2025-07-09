@@ -61,7 +61,7 @@ const youtubeSuite = [
     { href: "/youtube-description", label: "Description Generator", icon: FileText },
     { href: "/seo-tags", label: "SEO Tags Generator", icon: Tags },
     { href: "/chapters-generator", label: "Chapters Generator", icon: ListOrdered },
-    { href: "/thumbnail-ideas", label: "Thumbnail Ideas", icon: ImageIcon },
+    { href: "/thumbnail-generator", label: "Thumbnail Generator", icon: ImageIcon },
     { href: "/video-ideas", label: "Video Idea Generator", icon: Lightbulb },
     { href: "/video-to-script", label: "Video to Script", icon: FileVideo },
     { href: "/script-improver", label: "Script Improver", icon: Sparkles },
