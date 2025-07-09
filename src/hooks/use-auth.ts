@@ -11,7 +11,6 @@ import {
   AuthError
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase/config';
-import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 
 interface AuthContextType {
@@ -27,6 +26,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
   
   const handleAuthError = (error: unknown, provider: string) => {
     console.error(`Error signing in with ${provider}: `, error);
@@ -60,42 +60,41 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }
 
   useEffect(() => {
-    // onAuthStateChanged is the most reliable way to get the user's state.
-    // It returns an unsubscribe function that we will call on cleanup.
+    // This is the primary listener for auth state changes.
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);
     });
-    
-    // Check for a redirect result. This is separate from the listener.
-    // We don't need to do anything with the user object here, 
-    // because onAuthStateChanged will fire and handle it.
-    // We just need to catch and handle potential errors.
+
+    // Check for redirect result on initial load.
+    // This will only be non-null on the page load after a redirect.
     getRedirectResult(auth)
       .then((result) => {
         if (result) {
+          // User is signed in. The onAuthStateChanged listener above
+          // will handle setting the user and loading state.
+          // We can show a welcome message.
           toast({
-            title: "Welcome!",
+            title: `Welcome, ${result.user.displayName || 'friend'}!`,
             description: "You have successfully signed in.",
           });
         }
       })
       .catch((error) => {
-        // Don't show a big error toast if the user simply closed the popup.
-        if (error.code !== 'auth/popup-closed-by-user') {
-          handleAuthError(error, 'Redirect');
-        }
-    });
+        // Handle errors from the redirect.
+        handleAuthError(error, 'Redirect');
+      });
 
     // Cleanup subscription on unmount
     return () => unsubscribe();
-  }, []);
+  }, [toast]);
   
 
   const signInWithGoogle = async () => {
     setLoading(true);
     try {
       await signInWithRedirect(auth, new GoogleAuthProvider());
+      // After this, the page will redirect, and the logic in useEffect will handle the result.
     } catch (error) {
       handleAuthError(error, "Google");
       setLoading(false);

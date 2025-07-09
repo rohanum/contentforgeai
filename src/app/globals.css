@@ -87,6 +87,9 @@
     }
   }
 
+  .animated-gradient-border {
+    position: relative;
+  }
   .animated-gradient-border::before {
     content: "";
     position: absolute;
@@ -104,6 +107,10 @@
     transition: opacity 0.3s ease-in-out;
   }
   
+  .group:hover .animated-gradient-border::before {
+    opacity: 1;
+  }
+
   @property --angle {
     syntax: "<angle>";
     inherits: false;

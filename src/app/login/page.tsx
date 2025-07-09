@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Bot, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { cn } from "@/lib/utils";
 
 const GoogleIcon = () => (
   <svg className="h-5 w-5" viewBox="0 0 24 24">
@@ -24,20 +25,20 @@ const GitHubIcon = () => (
 );
 
 export default function LoginPage() {
-  const { user, loading, signInWithGoogle, signInWithGitHub, signOut } = useAuth();
+  const { user, loading, signInWithGoogle, signInWithGitHub } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
     // If auth is no longer loading and a user is found, redirect to the dashboard.
+    // This will happen on subsequent visits and after a successful login redirect.
     if (!loading && user) {
       router.push('/');
     }
   }, [user, loading, router]);
   
-  // While loading the initial auth state, or if the user is logged in
-  // (and about to be redirected), show a full-screen loader.
-  // This prevents the login form from flashing.
-  if (loading || user) {
+  // While the auth state is being resolved, show a full-screen loader.
+  // This prevents the login form from flashing, especially after a redirect.
+  if (loading) {
     return (
         <div className="flex items-center justify-center h-screen">
             <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -45,36 +46,52 @@ export default function LoginPage() {
     );
   }
 
+  // If loading is complete but there's a user, it means the useEffect above
+  // is about to redirect. We can show a loader to make it seamless.
+  if (user) {
+    return (
+        <div className="flex items-center justify-center h-screen">
+            <Loader2 className="h-12 w-12 animate-spin text-primary" />
+        </div>
+    );
+  }
+  
   // If not loading and no user, show the login form.
   return (
     <div className="flex items-center justify-center min-h-screen p-4 group">
-      <Card className="w-full max-w-md shadow-2xl shadow-primary/20 animated-gradient-border">
-        <CardHeader className="text-center">
-          <div className="mx-auto bg-gradient-to-br from-primary to-purple-400 rounded-lg p-3 inline-block glow-primary mb-4">
-            <Bot size={32} className="text-primary-foreground" />
-          </div>
-          <CardTitle className="text-3xl font-extrabold">Welcome Back</CardTitle>
-          <CardDescription className="text-muted-foreground">
-            Sign in to access your content creation toolkit.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <Button
-            variant="outline"
-            className="w-full h-12 text-base"
-            onClick={signInWithGoogle}
-          >
-            <GoogleIcon /> <span className="ml-2">Sign in with Google</span>
-          </Button>
-          <Button
-            variant="outline"
-            className="w-full h-12 text-base"
-            onClick={signInWithGitHub}
-          >
-            <GitHubIcon /> <span className="ml-2">Sign in with GitHub</span>
-          </Button>
-        </CardContent>
-      </Card>
+      <div className="relative w-full max-w-md">
+        <Card className="relative z-10 shadow-2xl shadow-primary/20">
+          <CardHeader className="text-center">
+            <div className="mx-auto bg-gradient-to-br from-primary to-purple-400 rounded-lg p-3 inline-block glow-primary mb-4">
+              <Bot size={32} className="text-primary-foreground" />
+            </div>
+            <CardTitle className="text-3xl font-extrabold">Welcome Back</CardTitle>
+            <CardDescription className="text-muted-foreground">
+              Sign in to access your content creation toolkit.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Button
+              variant="outline"
+              className="w-full h-12 text-base"
+              onClick={signInWithGoogle}
+            >
+              <GoogleIcon /> <span className="ml-2">Sign in with Google</span>
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full h-12 text-base"
+              onClick={signInWithGitHub}
+            >
+              <GitHubIcon /> <span className="ml-2">Sign in with GitHub</span>
+            </Button>
+          </CardContent>
+        </Card>
+        <div className={cn(
+            "absolute -inset-1 rounded-[calc(var(--radius)+2px)] z-0",
+            "animated-gradient-border group-hover:opacity-100 transition-opacity duration-300"
+        )} />
+      </div>
     </div>
   );
 }
