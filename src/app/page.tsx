@@ -23,12 +23,14 @@ import {
   Palette,
   BrainCircuit,
   Film,
-  Video
+  Video,
+  Rocket
 } from "lucide-react";
 import { motion } from "framer-motion";
 
 const strategyTools = [
   { href: "/content-strategist", title: "Content Strategist", description: "Generate a complete content plan from a simple goal.", icon: BrainCircuit, imageUrl: "https://placehold.co/500x300.png", dataAiHint: "glowing brain network" },
+  { href: "/launch-campaign", title: "Launch Campaign Generator", description: "Generate a multi-channel marketing campaign for a product launch.", icon: Rocket, imageUrl: "https://placehold.co/500x300.png", dataAiHint: "launch rocket space" },
 ]
 
 const youtubeTools = [

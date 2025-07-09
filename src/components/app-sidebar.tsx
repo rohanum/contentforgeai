@@ -42,7 +42,8 @@ import {
   BrainCircuit,
   Film,
   Video,
-  Library
+  Library,
+  Rocket,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
@@ -56,6 +57,7 @@ const mainNav = [
 
 const strategySuite = [
     { href: "/content-strategist", label: "Content Strategist", icon: BrainCircuit },
+    { href: "/launch-campaign", label: "Launch Campaign", icon: Rocket },
 ];
 
 const youtubeSuite = [
