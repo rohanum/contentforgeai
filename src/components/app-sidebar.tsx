@@ -34,12 +34,13 @@ import {
   ListOrdered,
   Captions,
   LogOut,
-  Loader2
+  Loader2,
+  User,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useAuth } from "@/hooks/use-auth";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "./ui/dropdown-menu";
 
 const mainNav = [
   { href: "/", label: "Dashboard", icon: LayoutGrid },
@@ -79,19 +80,7 @@ export function AppSidebar() {
 
   const handleSignOut = async () => {
     await signOut();
-    router.push('/login');
   };
-
-  const renderLinks = (links: typeof youtubeSuite) => links.map((link) => (
-    <SidebarMenuItem key={link.label}>
-        <SidebarMenuButton asChild isActive={isActive(link.href)} tooltip={link.label}>
-          <Link href={link.href} className="flex items-center gap-3">
-            <link.icon className="shrink-0" />
-            <span>{link.label}</span>
-          </Link>
-        </SidebarMenuButton>
-    </SidebarMenuItem>
-  ));
   
   const UserProfile = () => {
     if (loading) {
@@ -104,21 +93,28 @@ export function AppSidebar() {
     
     return (
       <div className="flex items-center gap-3 p-2">
-        <Avatar className="h-10 w-10">
-            <AvatarImage src={user.photoURL!} alt={user.displayName || "User"} data-ai-hint="profile avatar" />
-            <AvatarFallback>{user.displayName?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
-        </Avatar>
-        <div className="flex flex-col truncate">
-            <span className="font-semibold truncate">{user.displayName}</span>
-            <span className="text-xs text-muted-foreground truncate">{user.email}</span>
-        </div>
+        <Link href="/profile" className="flex-1 flex items-center gap-3 truncate">
+            <Avatar className="h-10 w-10">
+                <AvatarImage src={user.photoURL!} alt={user.displayName || "User"} data-ai-hint="profile avatar" />
+                <AvatarFallback>{user.displayName?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col truncate">
+                <span className="font-semibold truncate">{user.displayName || "User"}</span>
+                <span className="text-xs text-muted-foreground truncate">{user.email}</span>
+            </div>
+        </Link>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="ml-auto shrink-0">
                 <Settings />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent side="top" align="end">
+          <DropdownMenuContent side="top" align="end" className="w-56">
+              <DropdownMenuItem onClick={() => router.push('/profile')}>
+                <User className="mr-2 h-4 w-4" />
+                <span>Profile</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleSignOut}>
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Sign Out</span>
@@ -132,12 +128,12 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
-        <div className="flex items-center gap-3 p-2 pr-0">
+        <Link href="/" className="flex items-center gap-3 p-2 pr-0">
             <div className="bg-gradient-to-br from-primary to-purple-400 rounded-lg p-2 glow-primary">
                 <Bot size={24} className="text-primary-foreground" />
             </div>
             <span className="text-xl font-bold tracking-wide">ContentForge</span>
-        </div>
+        </Link>
       </SidebarHeader>
       <SidebarMenu className="flex-1 px-2">
         {mainNav.map((link) => (
@@ -152,13 +148,40 @@ export function AppSidebar() {
         ))}
         <SidebarSeparator className="my-2" />
         <SidebarGroupLabel className="px-2">YouTube Suite</SidebarGroupLabel>
-        {renderLinks(youtubeSuite)}
+        {youtubeSuite.map((link) => (
+            <SidebarMenuItem key={link.label}>
+                <SidebarMenuButton asChild isActive={isActive(link.href)} tooltip={link.label}>
+                <Link href={link.href} className="flex items-center gap-3">
+                    <link.icon className="shrink-0" />
+                    <span>{link.label}</span>
+                </Link>
+                </SidebarMenuButton>
+            </SidebarMenuItem>
+        ))}
         <SidebarSeparator className="my-2" />
         <SidebarGroupLabel className="px-2">Social Suite</SidebarGroupLabel>
-        {renderLinks(socialSuite)}
+        {socialSuite.map((link) => (
+            <SidebarMenuItem key={link.label}>
+                <SidebarMenuButton asChild isActive={isActive(link.href)} tooltip={link.label}>
+                <Link href={link.href} className="flex items-center gap-3">
+                    <link.icon className="shrink-0" />
+                    <span>{link.label}</span>
+                </Link>
+                </SidebarMenuButton>
+            </SidebarMenuItem>
+        ))}
         <SidebarSeparator className="my-2" />
         <SidebarGroupLabel className="px-2">Utilities</SidebarGroupLabel>
-        {renderLinks(utilities)}
+        {utilities.map((link) => (
+            <SidebarMenuItem key={link.label}>
+                <SidebarMenuButton asChild isActive={isActive(link.href)} tooltip={link.label}>
+                <Link href={link.href} className="flex items-center gap-3">
+                    <link.icon className="shrink-0" />
+                    <span>{link.label}</span>
+                </Link>
+                </SidebarMenuButton>
+            </SidebarMenuItem>
+        ))}
       </SidebarMenu>
       <SidebarFooter>
         <UserProfile />
