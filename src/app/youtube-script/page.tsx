@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -5,6 +6,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { generateYoutubeScript, GenerateYoutubeScriptOutput } from "@/ai/flows/generate-youtube-script";
+import { saveYoutubeScript } from "@/lib/firebase/scripts";
+import { useAuth } from "@/hooks/use-auth";
+
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,7 +16,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Copy } from "lucide-react";
+import { Loader2, Copy, Save, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
@@ -22,7 +26,10 @@ const formSchema = z.object({
 });
 
 export default function YoutubeScriptGeneratorPage() {
+  const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
   const [output, setOutput] = useState<GenerateYoutubeScriptOutput | null>(null);
   const { toast } = useToast();
 
@@ -38,6 +45,7 @@ export default function YoutubeScriptGeneratorPage() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     setOutput(null);
+    setIsSaved(false);
     try {
       const result = await generateYoutubeScript(values);
       setOutput(result);
@@ -62,6 +70,39 @@ export default function YoutubeScriptGeneratorPage() {
       });
     }
   };
+
+  const handleSave = async () => {
+    if (!output || !user) {
+      toast({
+        title: "Not logged in",
+        description: "You must be logged in to save a script.",
+        variant: "destructive"
+      });
+      return;
+    };
+    setIsSaving(true);
+    try {
+      const formData = form.getValues();
+      await saveYoutubeScript({
+        uid: user.uid,
+        topic: formData.topic,
+        tone: formData.tone,
+        scriptLength: formData.scriptLength,
+        script: output.script,
+      });
+      toast({ title: "Script Saved!", description: "You can find it in your Content Library."});
+      setIsSaved(true);
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Save Failed",
+        description: "There was an error saving your script.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
@@ -141,9 +182,20 @@ export default function YoutubeScriptGeneratorPage() {
               <CardDescription>Your AI-generated script will appear here.</CardDescription>
             </div>
             {output && (
-              <Button variant="ghost" size="icon" onClick={handleCopy}>
-                <Copy className="h-4 w-4" />
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button variant="outline" onClick={handleSave} disabled={isSaving || isSaved}>
+                    {isSaving 
+                        ? <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        : isSaved 
+                        ? <Check className="mr-2 h-4 w-4" /> 
+                        : <Save className="mr-2 h-4 w-4" />
+                    }
+                    {isSaved ? "Saved" : "Save"}
+                </Button>
+                <Button variant="ghost" size="icon" onClick={handleCopy}>
+                  <Copy className="h-4 w-4" />
+                </Button>
+              </div>
             )}
           </CardHeader>
           <CardContent>

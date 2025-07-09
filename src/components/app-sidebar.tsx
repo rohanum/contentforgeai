@@ -41,7 +41,8 @@ import {
   Palette,
   BrainCircuit,
   Film,
-  Video
+  Video,
+  Library
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
@@ -50,6 +51,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 
 const mainNav = [
   { href: "/", label: "Dashboard", icon: LayoutGrid },
+  { href: "/my-content", label: "Content Library", icon: Library },
 ];
 
 const strategySuite = [
