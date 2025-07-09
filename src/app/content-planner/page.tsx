@@ -1,9 +1,10 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
-import { format, addDays } from 'date-fns';
+import { format } from 'date-fns';
 import { addContentIdea, getContentIdeas, ContentIdea } from '@/lib/firebase/firestore';
 
 import { Calendar } from '@/components/ui/calendar';
@@ -14,7 +15,7 @@ import { Input } from '@/components/ui/input';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2, PlusCircle, Calendar as CalendarIcon } from 'lucide-react';
+import { Loader2, PlusCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const ideaFormSchema = z.object({
@@ -42,6 +43,7 @@ export default function ContentPlannerPage() {
       toast({
         title: "Authentication Required",
         description: "Please log in to access your personal Content Planner.",
+        variant: "destructive"
       });
       router.push('/login');
     }

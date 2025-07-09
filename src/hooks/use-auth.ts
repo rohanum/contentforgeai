@@ -1,3 +1,4 @@
+
 'use client';
 import React, { useState, useEffect, useContext, createContext, ReactNode } from 'react';
 import { 
@@ -5,7 +6,6 @@ import {
   GoogleAuthProvider, 
   GithubAuthProvider,
   signInWithRedirect,
-  getRedirectResult,
   signOut as firebaseSignOut,
   onAuthStateChanged,
   AuthError
@@ -35,11 +35,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (error instanceof Error) {
       const authError = error as AuthError;
       switch (authError.code) {
-        case 'auth/invalid-api-key':
-          description = "Sign-in failed. Your Firebase API Key is invalid. Please check your .env file.";
-          break;
         case 'auth/popup-closed-by-user':
-          description = "Sign-in was cancelled by the user.";
+          // This is a common case, we can handle it silently or with a mild notification
+          description = "Sign-in was cancelled.";
           break;
         case 'auth/account-exists-with-different-credential':
           description = "An account already exists with this email using a different sign-in method.";
@@ -60,41 +58,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }
 
   useEffect(() => {
-    // This is the primary listener for auth state changes.
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);
     });
 
-    // Check for redirect result on initial load.
-    // This will only be non-null on the page load after a redirect.
-    getRedirectResult(auth)
-      .then((result) => {
-        if (result) {
-          // User is signed in. The onAuthStateChanged listener above
-          // will handle setting the user and loading state.
-          // We can show a welcome message.
-          toast({
-            title: `Welcome, ${result.user.displayName || 'friend'}!`,
-            description: "You have successfully signed in.",
-          });
-        }
-      })
-      .catch((error) => {
-        // Handle errors from the redirect.
-        handleAuthError(error, 'Redirect');
-      });
-
     // Cleanup subscription on unmount
     return () => unsubscribe();
-  }, [toast]);
+  }, []);
   
 
   const signInWithGoogle = async () => {
     setLoading(true);
     try {
       await signInWithRedirect(auth, new GoogleAuthProvider());
-      // After this, the page will redirect, and the logic in useEffect will handle the result.
     } catch (error) {
       handleAuthError(error, "Google");
       setLoading(false);
@@ -113,7 +90,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signOut = async () => {
     await firebaseSignOut(auth);
-    // The onAuthStateChanged listener will automatically set user to null.
+    setUser(null);
   };
 
   const value = { user, loading, signInWithGoogle, signInWithGitHub, signOut };

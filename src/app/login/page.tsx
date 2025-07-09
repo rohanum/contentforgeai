@@ -29,26 +29,12 @@ export default function LoginPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // If auth is no longer loading and a user is found, redirect to the dashboard.
-    // This will happen on subsequent visits and after a successful login redirect.
     if (!loading && user) {
       router.push('/');
     }
   }, [user, loading, router]);
   
-  // While the auth state is being resolved, show a full-screen loader.
-  // This prevents the login form from flashing, especially after a redirect.
-  if (loading) {
-    return (
-        <div className="flex items-center justify-center h-screen">
-            <Loader2 className="h-12 w-12 animate-spin text-primary" />
-        </div>
-    );
-  }
-
-  // If loading is complete but there's a user, it means the useEffect above
-  // is about to redirect. We can show a loader to make it seamless.
-  if (user) {
+  if (loading || user) {
     return (
         <div className="flex items-center justify-center h-screen">
             <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -56,11 +42,14 @@ export default function LoginPage() {
     );
   }
   
-  // If not loading and no user, show the login form.
   return (
     <div className="flex items-center justify-center min-h-screen p-4 group">
-      <div className="relative w-full max-w-md">
-        <Card className="relative z-10 shadow-2xl shadow-primary/20">
+       <div className="relative w-full max-w-md">
+         <div className={cn(
+            "absolute -inset-1 rounded-[calc(var(--radius)+2px)] z-[-1]",
+            "animated-gradient-border"
+         )} />
+         <Card className="w-full max-w-md shadow-2xl shadow-primary/20">
           <CardHeader className="text-center">
             <div className="mx-auto bg-gradient-to-br from-primary to-purple-400 rounded-lg p-3 inline-block glow-primary mb-4">
               <Bot size={32} className="text-primary-foreground" />
@@ -87,10 +76,6 @@ export default function LoginPage() {
             </Button>
           </CardContent>
         </Card>
-        <div className={cn(
-            "absolute -inset-1 rounded-[calc(var(--radius)+2px)] z-0",
-            "animated-gradient-border group-hover:opacity-100 transition-opacity duration-300"
-        )} />
       </div>
     </div>
   );
