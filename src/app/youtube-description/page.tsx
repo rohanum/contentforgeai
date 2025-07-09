@@ -1,18 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { generateYoutubeDescription, GenerateYoutubeDescriptionOutput } from "@/ai/flows/generate-youtube-description";
+import { useAuth } from "@/hooks/use-auth";
+import { getBrandKit, BrandKit } from "@/lib/firebase/brand-kit";
+
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Copy } from "lucide-react";
+import { Loader2, Copy, Palette } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import Link from "next/link";
+
 
 const formSchema = z.object({
   topic: z.string().min(10, { message: "Topic must be at least 10 characters." }),
@@ -21,7 +27,9 @@ const formSchema = z.object({
 });
 
 export default function YoutubeDescriptionPage() {
+  const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [brandKit, setBrandKit] = useState<BrandKit | null>(null);
   const [output, setOutput] = useState<GenerateYoutubeDescriptionOutput | null>(null);
   const { toast } = useToast();
 
@@ -33,12 +41,31 @@ export default function YoutubeDescriptionPage() {
       exampleLinks: "",
     },
   });
+  
+  useEffect(() => {
+    async function fetchBrandKit() {
+        if(user) {
+            const data = await getBrandKit(user.uid);
+            setBrandKit(data);
+        }
+    }
+    fetchBrandKit();
+  }, [user]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     setOutput(null);
     try {
-      const result = await generateYoutubeDescription(values);
+      const input = {
+        ...values,
+        ...(brandKit && {
+            brandName: brandKit.brandName,
+            brandDescription: brandKit.brandDescription,
+            keywords: brandKit.keywords,
+            toneOfVoice: brandKit.toneOfVoice,
+        })
+      };
+      const result = await generateYoutubeDescription(input);
       setOutput(result);
     } catch (error) {
       console.error(error);
@@ -71,6 +98,24 @@ export default function YoutubeDescriptionPage() {
             <CardDescription>Generate SEO-optimized video descriptions.</CardDescription>
           </CardHeader>
           <CardContent>
+            {user && brandKit && (
+                 <Alert className="mb-6 bg-green-500/10 border-green-500/20 text-green-200">
+                    <Palette className="h-4 w-4 text-green-400" />
+                    <AlertTitle className="text-green-300">Brand Kit Applied!</AlertTitle>
+                    <AlertDescription>
+                        Your description will be generated using your "{brandKit.brandName}" brand identity.
+                    </AlertDescription>
+                </Alert>
+            )}
+             {user && !brandKit && (
+                 <Alert className="mb-6">
+                    <Palette className="h-4 w-4" />
+                    <AlertTitle>Want better results?</AlertTitle>
+                    <AlertDescription>
+                        <Link href="/brand-kit" className="underline">Set up your Brand Kit</Link> to generate content in your unique voice.
+                    </AlertDescription>
+                </Alert>
+            )}
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <FormField
