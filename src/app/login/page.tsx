@@ -44,7 +44,6 @@ export default function LoginPage() {
   return (
     <div className="flex items-center justify-center min-h-screen p-4">
       <Card className="w-full max-w-md shadow-2xl shadow-primary/20 animated-gradient-border">
-      <div className="absolute inset-0 z-10 group-hover:animated-gradient-border::before:opacity-100 transition-opacity duration-300 pointer-events-none" />
         <CardHeader className="text-center z-20">
           <div className="mx-auto bg-gradient-to-br from-primary to-purple-400 rounded-lg p-3 inline-block glow-primary mb-4">
             <Bot size={32} className="text-primary-foreground" />
