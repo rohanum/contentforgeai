@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -37,6 +38,7 @@ import {
   LogOut,
   Loader2,
   User,
+  Palette,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
@@ -71,6 +73,7 @@ const socialSuite = [
 const utilities = [
   { href: "/voiceover-generator", label: "Voiceover Generator", icon: Mic2 },
   { href: "/content-planner", label: "Content Planner", icon: Calendar },
+  { href: "/brand-kit", label: "Brand Kit", icon: Palette },
 ]
 
 export function AppSidebar() {

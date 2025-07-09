@@ -1,3 +1,4 @@
+
 // src/app/page.tsx
 "use client";
 
@@ -20,6 +21,7 @@ import {
   FileText,
   ListOrdered,
   Captions,
+  Palette,
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -47,6 +49,7 @@ const socialTools = [
 const utilityTools = [
   { href: "/voiceover-generator", title: "Voiceover Generator", description: "Generate a realistic voiceover from your script.", icon: Mic2, imageUrl: "https://placehold.co/500x300.png", dataAiHint: "sound waveform graph" },
   { href: "/content-planner", title: "Content Planner", description: "Organize all your content in a drag-and-drop calendar.", icon: Calendar, imageUrl: "https://placehold.co/500x300.png", dataAiHint: "holographic calendar" },
+  { href: "/brand-kit", title: "Brand Kit", description: "Define your brand voice and keywords for consistent AI-generated content.", icon: Palette, imageUrl: "https://placehold.co/500x300.png", dataAiHint: "brand color palette" },
 ];
 
 const containerVariants = {
