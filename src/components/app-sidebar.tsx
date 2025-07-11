@@ -31,7 +31,6 @@ import {
   Mic2,
   Calendar,
   Settings,
-  Bot,
   FileText,
   ListOrdered,
   Captions,
@@ -50,6 +49,7 @@ import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useAuth } from "@/hooks/use-auth";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "./ui/dropdown-menu";
+import Image from "next/image";
 
 const mainNav = [
   { href: "/", label: "Dashboard", icon: LayoutGrid },
@@ -145,8 +145,8 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarHeader>
         <Link href="/" className="flex items-center gap-3 p-2 pr-0">
-            <div className="bg-gradient-to-br from-primary to-purple-400 rounded-lg p-2 glow-primary">
-                <Bot size={24} className="text-primary-foreground" />
+            <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-purple-400 glow-primary">
+                <Image src="/logo.png" alt="ContentForge Logo" width={28} height={28} />
             </div>
             <span className="text-xl font-bold tracking-wide">ContentForge</span>
         </Link>

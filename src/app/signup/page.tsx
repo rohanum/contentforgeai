@@ -1,9 +1,10 @@
+
 "use client";
 
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Bot, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -12,6 +13,7 @@ import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import Image from "next/image";
 
 const signupSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email." }),
@@ -52,8 +54,8 @@ export default function SignupPage() {
     <div className="flex items-center justify-center min-h-screen p-4 group">
        <Card className="w-full max-w-md shadow-2xl shadow-primary/20 animated-gradient-border">
           <CardHeader className="text-center">
-            <div className="mx-auto bg-gradient-to-br from-primary to-purple-400 rounded-lg p-3 inline-block glow-primary mb-4">
-              <Bot size={32} className="text-primary-foreground" />
+            <div className="mx-auto bg-gradient-to-br from-primary to-purple-400 rounded-lg p-2.5 inline-block glow-primary mb-4">
+              <Image src="/logo.png" alt="ContentForge Logo" width={36} height={36} />
             </div>
             <CardTitle className="text-3xl font-extrabold">Create an Account</CardTitle>
             <CardDescription className="text-muted-foreground">
