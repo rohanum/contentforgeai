@@ -5,6 +5,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { improveScript, ImproveScriptOutput } from "@/ai/flows/improve-script";
+import { useApiKey } from "@/hooks/use-api-key";
+import { handleFlowError } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,6 +25,7 @@ export default function ScriptImproverPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [output, setOutput] = useState<ImproveScriptOutput | null>(null);
   const { toast } = useToast();
+  const { apiKey, isApiKeySet } = useApiKey();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -33,18 +36,17 @@ export default function ScriptImproverPage() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!isApiKeySet || !apiKey) {
+        toast({ title: "API Key Required", description: "Please set your Gemini API key in your profile.", variant: "destructive" });
+        return;
+    }
     setIsLoading(true);
     setOutput(null);
     try {
-      const result = await improveScript(values);
+      const result = await improveScript({ ...values, apiKey });
       setOutput(result);
     } catch (error) {
-      console.error(error);
-      toast({
-        title: "Error",
-        description: "Failed to improve script. Please try again.",
-        variant: "destructive",
-      });
+      handleFlowError(error, toast);
     } finally {
       setIsLoading(false);
     }
@@ -101,7 +103,7 @@ export default function ScriptImproverPage() {
                                 </FormItem>
                             )}
                         />
-                        <Button type="submit" disabled={isLoading} size="lg">
+                        <Button type="submit" disabled={isLoading || !isApiKeySet} size="lg">
                             {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Wand2 className="mr-2 h-4 w-4" />}
                             Improve Script
                         </Button>

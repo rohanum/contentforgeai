@@ -6,6 +6,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { generateLaunchCampaign, GenerateLaunchCampaignOutput } from "@/ai/flows/generate-launch-campaign";
+import { useApiKey } from "@/hooks/use-api-key";
+import { handleFlowError } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -29,6 +31,7 @@ export default function LaunchCampaignPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [output, setOutput] = useState<GenerateLaunchCampaignOutput | null>(null);
   const { toast } = useToast();
+  const { apiKey, isApiKeySet } = useApiKey();
 
   const form = useForm<z.infer<typeof GenerateLaunchCampaignInputSchema>>({
     resolver: zodResolver(GenerateLaunchCampaignInputSchema),
@@ -41,18 +44,17 @@ export default function LaunchCampaignPage() {
   });
 
   async function onSubmit(values: z.infer<typeof GenerateLaunchCampaignInputSchema>) {
+    if (!isApiKeySet || !apiKey) {
+        toast({ title: "API Key Required", description: "Please set your Gemini API key in your profile.", variant: "destructive" });
+        return;
+    }
     setIsLoading(true);
     setOutput(null);
     try {
-      const result = await generateLaunchCampaign(values);
+      const result = await generateLaunchCampaign({ ...values, apiKey });
       setOutput(result);
     } catch (error) {
-      console.error(error);
-      toast({
-        title: "Error Generating Campaign",
-        description: "There was an issue creating the campaign assets. Please try again.",
-        variant: "destructive",
-      });
+      handleFlowError(error, toast, "Error Generating Campaign");
     } finally {
       setIsLoading(false);
     }
@@ -168,7 +170,7 @@ export default function LaunchCampaignPage() {
                 <FormField control={form.control} name="productDescription" render={({ field }) => (<FormItem><FormLabel>Product Description</FormLabel><FormControl><Textarea placeholder="Describe your product, its key features, and what makes it unique." {...field} rows={5} /></FormControl><FormMessage /></FormItem>)} />
                 <FormField control={form.control} name="targetAudience" render={({ field }) => (<FormItem><FormLabel>Target Audience</FormLabel><FormControl><Input placeholder="e.g., Content creators, startup founders" {...field} /></FormControl><FormMessage /></FormItem>)} />
                 <FormField control={form.control} name="launchGoal" render={({ field }) => (<FormItem><FormLabel>Campaign Goal</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Select a goal" /></SelectTrigger></FormControl><SelectContent><SelectItem value="awareness">Build Awareness</SelectItem><SelectItem value="sales">Drive Sales</SelectItem><SelectItem value="signups">Get Signups</SelectItem></SelectContent></Select><FormMessage /></FormItem>)} />
-                <Button type="submit" disabled={isLoading} className="w-full" size="lg">{isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Generate Campaign</Button>
+                <Button type="submit" disabled={isLoading || !isApiKeySet} className="w-full" size="lg">{isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Generate Campaign</Button>
               </form>
             </Form>
           </CardContent>

@@ -7,6 +7,8 @@ import { z } from "zod";
 import Image from "next/image";
 import { generateFeatureVideo, GenerateFeatureVideoOutput } from "@/ai/flows/generate-feature-video";
 import { motion, AnimatePresence } from "framer-motion";
+import { useApiKey } from "@/hooks/use-api-key";
+import { handleFlowError } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -54,6 +56,7 @@ export default function FeatureToVideoPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [output, setOutput] = useState<GenerateFeatureVideoOutput | null>(null);
   const { toast } = useToast();
+  const { apiKey, isApiKeySet } = useApiKey();
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -133,13 +136,16 @@ export default function FeatureToVideoPage() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!isApiKeySet || !apiKey) {
+        toast({ title: "API Key Required", description: "Please set your Gemini API key in your profile.", variant: "destructive" });
+        return;
+    }
     setIsLoading(true); setOutput(null);
     try {
-      const result = await generateFeatureVideo(values);
+      const result = await generateFeatureVideo({ ...values, apiKey });
       setOutput(result);
     } catch (error) {
-      console.error(error);
-      toast({ title: "Error Generating Video Assets", description: "There was an issue creating the assets. Please try again.", variant: "destructive" });
+      handleFlowError(error, toast, "Error Generating Video Assets");
     } finally {
       setIsLoading(false);
     }
@@ -262,7 +268,7 @@ export default function FeatureToVideoPage() {
                 <FormField control={form.control} name="featureDescription" render={({ field }) => (<FormItem><FormLabel>Feature Description</FormLabel><FormControl><Textarea placeholder="e.g., Our new dashboard allows users to see all their key metrics in one place with customizable widgets." {...field} rows={6} /></FormControl><FormMessage /></FormItem>)} />
                 <FormField control={form.control} name="videoType" render={({ field }) => (<FormItem><FormLabel>Video Type</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Select a video type" /></SelectTrigger></FormControl><SelectContent><SelectItem value="Demo">Demo</SelectItem><SelectItem value="Explainer">Explainer</SelectItem><SelectItem value="Pitch">Pitch</SelectItem><SelectItem value="Promotional">Promotional</SelectItem></SelectContent></Select><FormMessage /></FormItem>)} />
                 <FormField control={form.control} name="voiceStyle" render={({ field }) => (<FormItem><FormLabel>Voice Style</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Select a voice style" /></SelectTrigger></FormControl><SelectContent><SelectItem value="friendly-casual">Friendly & Casual</SelectItem><SelectItem value="calm-professional">Calm & Professional</SelectItem><SelectItem value="energetic-promotional">Energetic & Promotional</SelectItem></SelectContent></Select><FormMessage /></FormItem>)} />
-                <Button type="submit" disabled={isLoading} className="w-full" size="lg">{isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Generate Video Kit</Button>
+                <Button type="submit" disabled={isLoading || !isApiKeySet} className="w-full" size="lg">{isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Generate Video Kit</Button>
               </form>
             </Form>
           </CardContent>

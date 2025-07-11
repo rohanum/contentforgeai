@@ -6,6 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { generateThumbnailImage, GenerateThumbnailImageOutput } from "@/ai/flows/generate-thumbnail-image";
 import Image from "next/image";
+import { useApiKey } from "@/hooks/use-api-key";
+import { handleFlowError } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -35,6 +37,7 @@ export default function ThumbnailGeneratorPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [output, setOutput] = useState<GenerateThumbnailImageOutput | null>(null);
   const { toast } = useToast();
+  const { apiKey, isApiKeySet } = useApiKey();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -45,18 +48,17 @@ export default function ThumbnailGeneratorPage() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!isApiKeySet || !apiKey) {
+        toast({ title: "API Key Required", description: "Please set your Gemini API key in your profile.", variant: "destructive" });
+        return;
+    }
     setIsLoading(true);
     setOutput(null);
     try {
-      const result = await generateThumbnailImage(values);
+      const result = await generateThumbnailImage({ ...values, apiKey });
       setOutput(result);
     } catch (error) {
-      console.error(error);
-      toast({
-        title: "Error Generating Thumbnails",
-        description: "There was an issue creating the images. Please try again.",
-        variant: "destructive",
-      });
+      handleFlowError(error, toast, "Error Generating Thumbnails");
     } finally {
       setIsLoading(false);
     }
@@ -119,7 +121,7 @@ export default function ThumbnailGeneratorPage() {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" disabled={isLoading} className="w-full" size="lg">
+                <Button type="submit" disabled={isLoading || !isApiKeySet} className="w-full" size="lg">
                   {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   Generate Thumbnails
                 </Button>

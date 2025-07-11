@@ -9,6 +9,8 @@ import { discoverTrendingReels, DiscoverTrendingReelsOutput, Trend } from "@/ai/
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import { saveTrend, getSavedTrends } from "@/lib/firebase/trends";
+import { useApiKey } from "@/hooks/use-api-key";
+import { handleFlowError } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -34,6 +36,7 @@ export default function TrendingReelsPage() {
   const { toast } = useToast();
   const router = useRouter();
   const { user } = useAuth();
+  const { apiKey, isApiKeySet } = useApiKey();
   
   const [savingTrendTitle, setSavingTrendTitle] = useState<string | null>(null);
   const [savedTrendTitles, setSavedTrendTitles] = useState<Set<string>>(new Set());
@@ -54,22 +57,17 @@ export default function TrendingReelsPage() {
   }, [user]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!isApiKeySet || !apiKey) {
+        toast({ title: "API Key Required", description: "Please set your Gemini API key in your profile.", variant: "destructive" });
+        return;
+    }
     setIsLoading(true);
     setOutput(null);
     try {
-      const result = await discoverTrendingReels(values);
+      const result = await discoverTrendingReels({ ...values, apiKey });
       setOutput(result);
     } catch (error) {
-      console.error(error);
-      let description = "Failed to discover trending reels. Please try again.";
-      if (error instanceof Error && (error.message.includes('503') || error.message.includes('overloaded'))) {
-        description = "The AI model is currently busy. Please wait a moment and try again.";
-      }
-      toast({
-        title: "Error",
-        description: description,
-        variant: "destructive",
-      });
+      handleFlowError(error, toast);
     } finally {
       setIsLoading(false);
     }
@@ -136,7 +134,7 @@ export default function TrendingReelsPage() {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" disabled={isLoading} className="w-full">
+                <Button type="submit" disabled={isLoading || !isApiKeySet} className="w-full">
                   {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   Discover Trends
                 </Button>

@@ -6,6 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { generateShortsFromScript, GenerateShortsFromScriptOutput } from "@/ai/flows/generate-shorts-from-script";
 import { useRouter } from 'next/navigation';
+import { useApiKey } from "@/hooks/use-api-key";
+import { handleFlowError } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -23,6 +25,7 @@ export default function ScriptToShortsPage() {
   const [output, setOutput] = useState<GenerateShortsFromScriptOutput | null>(null);
   const { toast } = useToast();
   const router = useRouter();
+  const { apiKey, isApiKeySet } = useApiKey();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -32,18 +35,17 @@ export default function ScriptToShortsPage() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!isApiKeySet || !apiKey) {
+        toast({ title: "API Key Required", description: "Please set your Gemini API key in your profile.", variant: "destructive" });
+        return;
+    }
     setIsLoading(true);
     setOutput(null);
     try {
-      const result = await generateShortsFromScript(values);
+      const result = await generateShortsFromScript({ ...values, apiKey });
       setOutput(result);
     } catch (error) {
-      console.error(error);
-      toast({
-        title: "Error",
-        description: "Failed to generate short-form ideas. Please try again.",
-        variant: "destructive",
-      });
+      handleFlowError(error, toast);
     } finally {
       setIsLoading(false);
     }
@@ -92,7 +94,7 @@ export default function ScriptToShortsPage() {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" disabled={isLoading} className="w-full" size="lg">
+                <Button type="submit" disabled={isLoading || !isApiKeySet} className="w-full" size="lg">
                   {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   Generate Shorts
                 </Button>

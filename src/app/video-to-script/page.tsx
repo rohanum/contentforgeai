@@ -5,6 +5,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { convertVideoToScript, ConvertVideoToScriptOutput } from "@/ai/flows/convert-video-to-script";
+import { useApiKey } from "@/hooks/use-api-key";
+import { handleFlowError } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,6 +24,7 @@ export default function VideoToScriptPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [output, setOutput] = useState<ConvertVideoToScriptOutput | null>(null);
   const { toast } = useToast();
+  const { apiKey, isApiKeySet } = useApiKey();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -32,18 +35,17 @@ export default function VideoToScriptPage() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!isApiKeySet || !apiKey) {
+        toast({ title: "API Key Required", description: "Please set your Gemini API key in your profile.", variant: "destructive" });
+        return;
+    }
     setIsLoading(true);
     setOutput(null);
     try {
-      const result = await convertVideoToScript(values);
+      const result = await convertVideoToScript({ ...values, apiKey });
       setOutput(result);
     } catch (error) {
-      console.error(error);
-      toast({
-        title: "Error",
-        description: "Failed to convert video to script. Please check the URL and try again.",
-        variant: "destructive",
-      });
+      handleFlowError(error, toast);
     } finally {
       setIsLoading(false);
     }
@@ -96,7 +98,7 @@ export default function VideoToScriptPage() {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" disabled={isLoading} className="w-full">
+                <Button type="submit" disabled={isLoading || !isApiKeySet} className="w-full">
                   {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   Convert Video
                 </Button>

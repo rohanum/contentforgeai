@@ -7,7 +7,8 @@ import { z } from "zod";
 import { generateYoutubeDescription, GenerateYoutubeDescriptionOutput } from "@/ai/flows/generate-youtube-description";
 import { useAuth } from "@/hooks/use-auth";
 import { getBrandKit, BrandKit } from "@/lib/firebase/brand-kit";
-
+import { useApiKey } from "@/hooks/use-api-key";
+import { handleFlowError } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -32,6 +33,7 @@ export default function YoutubeDescriptionPage() {
   const [brandKit, setBrandKit] = useState<BrandKit | null>(null);
   const [output, setOutput] = useState<GenerateYoutubeDescriptionOutput | null>(null);
   const { toast } = useToast();
+  const { apiKey, isApiKeySet } = useApiKey();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -53,11 +55,16 @@ export default function YoutubeDescriptionPage() {
   }, [user]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!isApiKeySet || !apiKey) {
+        toast({ title: "API Key Required", description: "Please set your Gemini API key in your profile.", variant: "destructive" });
+        return;
+    }
     setIsLoading(true);
     setOutput(null);
     try {
       const input = {
         ...values,
+        apiKey,
         ...(brandKit && {
             brandName: brandKit.brandName,
             brandDescription: brandKit.brandDescription,
@@ -68,12 +75,7 @@ export default function YoutubeDescriptionPage() {
       const result = await generateYoutubeDescription(input);
       setOutput(result);
     } catch (error) {
-      console.error(error);
-      toast({
-        title: "Error",
-        description: "Failed to generate description. Please try again.",
-        variant: "destructive",
-      });
+      handleFlowError(error, toast);
     } finally {
       setIsLoading(false);
     }
@@ -157,7 +159,7 @@ export default function YoutubeDescriptionPage() {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" disabled={isLoading} className="w-full">
+                <Button type="submit" disabled={isLoading || !isApiKeySet} className="w-full">
                   {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   Generate Description
                 </Button>
