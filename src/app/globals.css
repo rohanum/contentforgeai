@@ -37,6 +37,42 @@
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+  .prose {
+    @apply text-foreground;
+  }
+  .prose h2 {
+    @apply text-2xl font-bold mt-8 mb-4 border-b pb-2;
+  }
+  .prose h3 {
+    @apply text-xl font-semibold mt-6 mb-3;
+  }
+  .prose p,
+  .prose ul,
+  .prose ol {
+    @apply mb-4 text-muted-foreground leading-relaxed;
+  }
+  .prose ul,
+  .prose ol {
+    @apply pl-5;
+  }
+  .prose ul {
+    @apply list-disc;
+  }
+  .prose ol {
+    @apply list-decimal;
+  }
+  .prose li > p {
+    @apply my-2;
+  }
+  .prose a {
+    @apply text-primary hover:underline;
+  }
+  .prose hr {
+    @apply my-8 border-border;
+  }
+  .prose strong {
+    @apply font-semibold text-foreground;
+  }
 }
 
 @layer utilities {

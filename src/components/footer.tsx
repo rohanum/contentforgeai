@@ -111,9 +111,9 @@ export function Footer() {
         <div className="mt-16 border-t border-white/10 pt-8 sm:mt-20 lg:mt-24 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-xs leading-5 text-muted-foreground">&copy; {new Date().getFullYear()} ContentForge AI. All rights reserved.</p>
           <div className="flex space-x-4 text-xs text-muted-foreground">
-            <Link href="#" className="hover:text-primary">Terms of Service</Link>
-            <Link href="#" className="hover:text-primary">Privacy Policy</Link>
-            <Link href="#" className="hover:text-primary">Cookie Policy</Link>
+            <Link href="/terms" className="hover:text-primary">Terms of Service</Link>
+            <Link href="/privacy" className="hover:text-primary">Privacy Policy</Link>
+            <Link href="/cookies" className="hover:text-primary">Cookie Policy</Link>
           </div>
         </div>
       </div>
