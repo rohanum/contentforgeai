@@ -7,12 +7,12 @@ import { AppSidebar } from '@/components/app-sidebar';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import { AuthProvider, useAuth } from '@/hooks/use-auth';
-import { ApiKeyProvider, useApiKey } from '@/hooks/use-api-key';
+import { ApiKeyContext, useApiKeyManager, useApiKey } from '@/hooks/use-api-key';
 import { Footer } from '@/components/footer';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ReactNode } from 'react';
 import { Loader2, KeyRound } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { usePathname } from 'next/navigation';
@@ -90,6 +90,15 @@ function ApiKeyPrompt() {
             </DialogContent>
         </Dialog>
     );
+}
+
+function ApiKeyProvider({ children }: { children: ReactNode }) {
+  const apiKeyManager = useApiKeyManager();
+  return (
+    <ApiKeyContext.Provider value={apiKeyManager}>
+      {children}
+    </ApiKeyContext.Provider>
+  );
 }
 
 function AppLayout({ children }: { children: React.ReactNode }) {

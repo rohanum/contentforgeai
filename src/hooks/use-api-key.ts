@@ -1,7 +1,7 @@
 // src/hooks/use-api-key.ts
 "use client";
 
-import { useState, useEffect, useCallback, createContext, useContext, ReactNode } from "react";
+import { useState, useEffect, useCallback, createContext, useContext } from "react";
 
 interface ApiKeyContextType {
   apiKey: string | null;
@@ -10,11 +10,20 @@ interface ApiKeyContextType {
   isLoading: boolean;
 }
 
-const ApiKeyContext = createContext<ApiKeyContextType | undefined>(undefined);
+export const ApiKeyContext = createContext<ApiKeyContextType | undefined>(undefined);
 
 const API_KEY_STORAGE_KEY = "contentforge-gemini-api-key";
 
-export const ApiKeyProvider = ({ children }: { children: ReactNode }) => {
+export const useApiKey = () => {
+  const context = useContext(ApiKeyContext);
+  if (context === undefined) {
+    throw new Error("useApiKey must be used within an ApiKeyProvider");
+  }
+  return context;
+};
+
+// This hook contains the provider's logic and can be used in a .tsx file
+export const useApiKeyManager = (): ApiKeyContextType => {
   const [apiKey, setApiKeyState] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -44,24 +53,10 @@ export const ApiKeyProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  const value = {
+  return {
     apiKey,
     setApiKey,
     isApiKeySet: !!apiKey,
     isLoading,
   };
-
-  return (
-    <ApiKeyContext.Provider value={value}>
-      {children}
-    </ApiKeyContext.Provider>
-  );
-};
-
-export const useApiKey = () => {
-  const context = useContext(ApiKeyContext);
-  if (context === undefined) {
-    throw new Error("useApiKey must be used within an ApiKeyProvider");
-  }
-  return context;
 };
