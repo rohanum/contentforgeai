@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from './ui/button';
@@ -22,8 +23,8 @@ const solutions = [
   const company = [
     { name: 'Content Planner', href: '/content-planner' },
     { name: 'Brand Kit', href: '/brand-kit' },
-    { name: 'About (Coming Soon)', href: '#' },
-    { name: 'Careers (Coming Soon)', href: '#' },
+    { name: 'About', href: '/about' },
+    { name: 'Careers', href: '/careers' },
   ];
 
   const TestimonialCard = ({ author, quote }: { author: string, quote: string }) => (
