@@ -54,7 +54,7 @@ const socialTools = [
   { href: "/reel-script", title: "Reel Script Generator", description: "Create short-form video scripts for Reels and TikTok.", icon: Instagram, imageUrl: "https://i.ibb.co/8gvPm9fM/reel-script-generator.png", dataAiHint: "social media interface" },
   { href: "/caption-generator", title: "Caption Generator", description: "Generate engaging captions for your social media posts.", icon: Captions, imageUrl: "https://i.ibb.co/Ld1Mnq86/Caption-Generator.png", dataAiHint: "glowing text editor" },
   { href: "/hashtag-generator", title: "Hashtag Generator", description: "Find viral, medium, and low competition hashtags.", icon: Hash, imageUrl: "https://i.ibb.co/cSPs4PPb/Hashtag-Generator.png", dataAiHint: "data analytics" },
-  { href: "/carousel-writer", title: "Carousel Writer", description: "Write compelling slide-by-slide carousel copy.", icon: CopyIcon, imageUrl: "https://placehold.co/500x300.png", dataAiHint: "modern ui slides" },
+  { href: "/carousel-writer", title: "Carousel Writer", description: "Write compelling slide-by-slide carousel copy.", icon: CopyIcon, imageUrl: "https://i.ibb.co/twBQZ5bZ/Carousel-writer.png", dataAiHint: "modern ui slides" },
   { href: "/instagram-story", title: "Instagram Story Flow", description: "Generate a 3-5 frame story script for your brand.", icon: History, imageUrl: "https://i.ibb.co/VpQBRgcz/Instagram-Story-Flow.png", dataAiHint: "futuristic story ui" },
   { href: "/trending-reels", title: "Trending Reels Discovery", description: "Find trending Reels and get content suggestions.", icon: Flame, imageUrl: "https://i.ibb.co/FbNNPzv8/Trending-Reels-Discovery.png", dataAiHint: "abstract fire digital" },
 ];
