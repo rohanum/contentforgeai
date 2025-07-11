@@ -5,6 +5,7 @@ import {AppSidebar} from '@/components/app-sidebar';
 import {Toaster} from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import { AuthProvider } from '@/hooks/use-auth';
+import { Footer } from '@/components/footer';
 
 export const metadata: Metadata = {
   title: 'ContentForge AI',
@@ -28,12 +29,13 @@ export default function RootLayout({
       </head>
       <body className={cn("font-sans antialiased", "aurora-background")}>
         <div className="absolute top-0 left-0 w-full h-full bg-grid-pattern [mask-image:radial-gradient(ellipse_at_center,transparent_10%,black)] z-0"></div>
-        <div className="relative z-10">
+        <div className="relative z-10 flex flex-col min-h-screen">
           <AuthProvider>
             <SidebarProvider defaultOpen>
               <AppSidebar />
               <SidebarInset>
-                <div className="p-4 sm:p-6 lg:p-8">{children}</div>
+                <div className="p-4 sm:p-6 lg:p-8 flex-grow">{children}</div>
+                <Footer />
               </SidebarInset>
             </SidebarProvider>
           </AuthProvider>
