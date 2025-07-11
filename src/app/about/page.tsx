@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 const teamMembers = [
-    { name: "Alex Turing", role: "Founder & AI Visionary", description: "Technologist, maker, and firm believer in creative automation", avatar: "https://placehold.co/100x100.png", dataAiHint: "ceo portrait" },
-    { name: "Jordan Smith", role: "Lead Product Designer", description: "Building elegant UX for creative chaos", avatar: "https://placehold.co/100x100.png", dataAiHint: "designer profile" },
-    { name: "Casey Lovelace", role: "Head of Community", description: "Your direct line to the ContentForge creator family", avatar: "https://placehold.co/100x100.png", dataAiHint: "community manager" },
+    { name: "RUX", role: "Founder & Product Architect", description: "Driving the future of AI-powered creativity and smart automation", avatar: "https://placehold.co/100x100.png", dataAiHint: "founder portrait" },
+    { name: "Skye Raynor", role: "Creative Systems Engineer", description: "Leads AI pipeline design, UX intelligence, and backend wizardry", avatar: "https://placehold.co/100x100.png", dataAiHint: "engineer profile" },
+    { name: "Nova Kessler", role: "Community Strategy & Ecosystem Partnerships", description: "Building creator culture and tools that empower millions", avatar: "https://placehold.co/100x100.png", dataAiHint: "strategist portrait" },
 ];
 
 const values = [
