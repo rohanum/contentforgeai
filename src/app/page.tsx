@@ -14,6 +14,7 @@ import {
   Sparkles,
   Hash,
   Copy as CopyIcon,
+  LayoutGrid,
   History,
   Mic2,
   Calendar,
@@ -25,9 +26,15 @@ import {
   Film,
   Video,
   Rocket,
-  Zap
+  Zap,
+  Library,
 } from "lucide-react";
 import { motion } from "framer-motion";
+
+const mainNav = [
+  { href: "/", title: "Dashboard", description: "Your central hub for all content creation tools.", icon: LayoutGrid, imageUrl: "https://placehold.co/500x300.png", dataAiHint: "futuristic command center" },
+  { href: "/my-content", title: "Content Library", description: "Access all your saved AI-generated content in one place.", icon: Library, imageUrl: "https://placehold.co/500x300.png", dataAiHint: "digital library archive" },
+];
 
 const youtubeTools = [
   { href: "/viral-video-strategist", title: "Viral Video Strategist", description: "Get AI-powered strategic blueprints for your next hit video.", icon: Zap, imageUrl: "https://placehold.co/500x300.png", dataAiHint: "lightning analytics" },
@@ -52,6 +59,8 @@ const socialTools = [
 ];
 
 const utilityTools = [
+  { href: "/content-strategist", title: "Content Strategist", description: "Get a complete, multi-platform content strategy for your brand.", icon: BrainCircuit, imageUrl: "https://placehold.co/500x300.png", dataAiHint: "neural network" },
+  { href: "/launch-campaign", title: "Launch Campaign", description: "Generate a full marketing campaign for a product launch.", icon: Rocket, imageUrl: "https://placehold.co/500x300.png", dataAiHint: "rocket launch space" },
   { href: "/voiceover-generator", title: "Voiceover Generator", description: "Generate a realistic voiceover from your script.", icon: Mic2, imageUrl: "https://placehold.co/500x300.png", dataAiHint: "sound waveform graph" },
   { href: "/content-planner", title: "Content Planner", description: "Organize all your content in a drag-and-drop calendar.", icon: Calendar, imageUrl: "https://placehold.co/500x300.png", dataAiHint: "holographic calendar" },
   { href: "/brand-kit", title: "Brand Kit", description: "Define your brand voice and keywords for consistent AI-generated content.", icon: Palette, imageUrl: "https://placehold.co/500x300.png", dataAiHint: "brand color palette" },

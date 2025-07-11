@@ -10,19 +10,19 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-const GenerateShortsFromScriptInputSchema = z.object({
+export const GenerateShortsFromScriptInputSchema = z.object({
   script: z.string().min(100).describe('The long-form video script to be repurposed.'),
 });
 export type GenerateShortsFromScriptInput = z.infer<typeof GenerateShortsFromScriptInputSchema>;
 
-const ShortIdeaSchema = z.object({
+export const ShortIdeaSchema = z.object({
     hook: z.string().describe("A powerful, attention-grabbing hook for the short video (under 10 words)."),
     title: z.string().describe("A concise title for the short video."),
     script_segment: z.string().describe("A key, self-contained segment from the original script that delivers value quickly."),
     cta: z.string().describe("A clear call-to-action prompting viewers to watch the full video on YouTube."),
 });
 
-const GenerateShortsFromScriptOutputSchema = z.object({
+export const GenerateShortsFromScriptOutputSchema = z.object({
   shorts: z.array(ShortIdeaSchema).describe('An array of 3-5 short-form video ideas.'),
 });
 export type GenerateShortsFromScriptOutput = z.infer<typeof GenerateShortsFromScriptOutputSchema>;

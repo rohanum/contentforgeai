@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { generateShortsFromScript, GenerateShortsFromScriptOutput } from "@/ai/flows/generate-shorts-from-script";
+import { generateShortsFromScript, GenerateShortsFromScriptOutput, GenerateShortsFromScriptInputSchema } from "@/ai/flows/generate-shorts-from-script";
 import { useRouter } from 'next/navigation';
 
 import { Button } from "@/components/ui/button";
@@ -14,9 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Clapperboard, Film, PenSquare, Copy } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-const formSchema = z.object({
-  script: z.string().min(100, { message: "Script must be at least 100 characters to repurpose effectively." }),
-});
+const formSchema = GenerateShortsFromScriptInputSchema;
 
 export default function ScriptToShortsPage() {
   const [isLoading, setIsLoading] = useState(false);
