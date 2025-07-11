@@ -8,13 +8,14 @@
  * - GenerateYoutubeScriptOutput - The return type for the generateYoutubeScript function.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai, configureUserGenkit} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GenerateYoutubeScriptInputSchema = z.object({
   topic: z.string().describe('The topic of the YouTube video script.'),
   tone: z.string().optional().describe('The tone or style of the script (e.g., funny, informative, serious).'),
   scriptLength: z.enum(['short-form', 'long-form']).default('long-form').describe('The desired length of the script (short-form or long-form).'),
+  apiKey: z.string().describe("The user's Gemini API key."),
 });
 export type GenerateYoutubeScriptInput = z.infer<typeof GenerateYoutubeScriptInputSchema>;
 
@@ -24,6 +25,7 @@ const GenerateYoutubeScriptOutputSchema = z.object({
 export type GenerateYoutubeScriptOutput = z.infer<typeof GenerateYoutubeScriptOutputSchema>;
 
 export async function generateYoutubeScript(input: GenerateYoutubeScriptInput): Promise<GenerateYoutubeScriptOutput> {
+  configureUserGenkit(input.apiKey);
   return generateYoutubeScriptFlow(input);
 }
 

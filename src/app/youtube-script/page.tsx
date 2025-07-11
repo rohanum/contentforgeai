@@ -1,13 +1,15 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { generateYoutubeScript, GenerateYoutubeScriptOutput } from "@/ai/flows/generate-youtube-script";
 import { saveYoutubeScript } from "@/lib/firebase/scripts";
 import { useAuth } from "@/hooks/use-auth";
+import { useApiKey } from "@/hooks/use-api-key";
+import { useSearchParams } from 'next/navigation';
 
 
 import { Button } from "@/components/ui/button";
@@ -27,6 +29,8 @@ const formSchema = z.object({
 
 export default function YoutubeScriptGeneratorPage() {
   const { user } = useAuth();
+  const { apiKey, isApiKeySet } = useApiKey();
+  const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
@@ -42,18 +46,30 @@ export default function YoutubeScriptGeneratorPage() {
     },
   });
 
+  useEffect(() => {
+    const topicFromParams = searchParams.get('topic');
+    if (topicFromParams) {
+        form.setValue('topic', topicFromParams);
+    }
+  }, [searchParams, form]);
+
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!isApiKeySet || !apiKey) {
+        toast({ title: "API Key Required", description: "Please set your Gemini API key in your profile.", variant: "destructive" });
+        return;
+    }
     setIsLoading(true);
     setOutput(null);
     setIsSaved(false);
     try {
-      const result = await generateYoutubeScript(values);
+      const result = await generateYoutubeScript({ ...values, apiKey });
       setOutput(result);
     } catch (error) {
       console.error(error);
       toast({
         title: "Error",
-        description: "Failed to generate script. Please try again.",
+        description: "Failed to generate script. Please check your API key and try again.",
         variant: "destructive",
       });
     } finally {
@@ -164,7 +180,7 @@ export default function YoutubeScriptGeneratorPage() {
                     )}
                   />
                 </div>
-                <Button type="submit" disabled={isLoading} className="w-full">
+                <Button type="submit" disabled={isLoading || !isApiKeySet} className="w-full">
                   {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   Generate Script
                 </Button>
@@ -183,7 +199,7 @@ export default function YoutubeScriptGeneratorPage() {
             </div>
             {output && (
               <div className="flex items-center gap-2">
-                <Button variant="outline" onClick={handleSave} disabled={isSaving || isSaved}>
+                <Button variant="outline" onClick={handleSave} disabled={isSaving || isSaved || !user}>
                     {isSaving 
                         ? <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         : isSaved 
