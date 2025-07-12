@@ -79,6 +79,32 @@ export default function LoginPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+                <Button
+                    variant="outline"
+                    className="w-full h-12 text-base"
+                    onClick={signInWithGoogle}
+                    disabled={isSubmitting}
+                    >
+                    <GoogleIcon /> <span className="ml-2">Google</span>
+                </Button>
+                <Button
+                    variant="outline"
+                    className="w-full h-12 text-base"
+                    onClick={signInWithGitHub}
+                    disabled={isSubmitting}
+                    >
+                    <GitHubIcon /> <span className="ml-2">GitHub</span>
+                </Button>
+            </div>
+
+            <div className="relative my-4">
+              <Separator />
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-2 bg-card text-muted-foreground text-sm">
+                OR
+              </div>
+            </div>
+            
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
@@ -96,29 +122,6 @@ export default function LoginPage() {
               </Button>
             </form>
 
-            <div className="relative my-4">
-              <Separator />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-2 bg-card text-muted-foreground text-sm">
-                OR CONTINUE WITH
-              </div>
-            </div>
-
-            <Button
-              variant="outline"
-              className="w-full h-12 text-base"
-              onClick={signInWithGoogle}
-              disabled={isSubmitting}
-            >
-              <GoogleIcon /> <span className="ml-2">Sign in with Google</span>
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full h-12 text-base"
-              onClick={signInWithGitHub}
-              disabled={isSubmitting}
-            >
-              <GitHubIcon /> <span className="ml-2">Sign in with GitHub</span>
-            </Button>
             <div className="text-center text-sm">
                 Don&apos;t have an account?{' '}
                 <Link href="/signup" className="underline text-primary">
