@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { Button } from './ui/button';
 import { Separator } from './ui/separator';
 import { Input } from './ui/input';
-import { Github, Twitter, Youtube, Send } from 'lucide-react';
+import { Github, Twitter, Youtube, Send, MessageSquareHeart } from 'lucide-react';
 
 const solutions = [
     { name: 'Viral Video Strategist', href: '/viral-video-strategist' },
@@ -59,7 +59,7 @@ export function Footer() {
         <div className="xl:grid xl:grid-cols-4 xl:gap-8">
             <div className="space-y-4 col-span-1">
                 <Link href="/" className="flex items-center gap-2">
-                    <Image src="/logo.png" alt="ContentForge Logo" width={32} height={32} />
+                    <Image src="/logo.png" alt="ContentForge Logo" width={32} height={32} data-ai-hint="logo" />
                     <span className="font-bold text-xl">ContentForge AI</span>
                 </Link>
                 <p className="text-muted-foreground">Create your next masterpiece with the power of ContentForge AI.</p>
@@ -98,12 +98,14 @@ export function Footer() {
                         </ul>
                     </div>
                     <div className="mt-10 md:mt-0">
-                        <h3 className="text-sm font-semibold leading-6">Stay Tuned</h3>
-                        <p className="text-sm text-muted-foreground mt-6">Get the latest feature updates and tips.</p>
-                        <form className="mt-4 flex items-center gap-2">
-                            <Input type="email" placeholder="Enter your email" aria-label="Email address" />
-                            <Button type="submit" variant="ghost" size="icon"><Send/></Button>
-                        </form>
+                        <h3 className="text-sm font-semibold leading-6">Suggestions & Feedback</h3>
+                        <p className="text-sm text-muted-foreground mt-6">Have an idea or feedback? We'd love to hear from you.</p>
+                        <Button asChild className="mt-4">
+                            <a href="mailto:velora.official.ai@gmail.com?subject=Suggestion for ContentForge AI">
+                                <MessageSquareHeart className="mr-2 h-4 w-4" />
+                                Share Your Ideas
+                            </a>
+                        </Button>
                     </div>
                 </div>
             </div>
