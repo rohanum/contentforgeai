@@ -7,7 +7,7 @@
  * It now integrates with the user's Brand Kit for more personalized, brand-aware output.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai, configureUserGenkit} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GenerateYoutubeDescriptionInputSchema = z.object({
@@ -19,6 +19,7 @@ const GenerateYoutubeDescriptionInputSchema = z.object({
   brandDescription: z.string().optional().describe("A description of the user's brand."),
   keywords: z.array(z.string()).optional().describe("A list of keywords relevant to the user's brand."),
   toneOfVoice: z.string().optional().describe("The desired tone of voice for the brand."),
+  apiKey: z.string().describe("The user's Gemini API key."),
 });
 export type GenerateYoutubeDescriptionInput = z.infer<
   typeof GenerateYoutubeDescriptionInputSchema
@@ -34,6 +35,7 @@ export type GenerateYoutubeDescriptionOutput = z.infer<
 export async function generateYoutubeDescription(
   input: GenerateYoutubeDescriptionInput
 ): Promise<GenerateYoutubeDescriptionOutput> {
+  configureUserGenkit(input.apiKey);
   return generateYoutubeDescriptionFlow(input);
 }
 
