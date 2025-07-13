@@ -7,7 +7,7 @@
  * - GenerateVoiceoverOutput - The return type for the generateVoiceover function.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai, configureUserGenkit} from '@/ai/genkit';
 import {googleAI} from '@genkit-ai/googleai';
 import {z} from 'genkit';
 import wav from 'wav';
@@ -15,6 +15,7 @@ import wav from 'wav';
 const GenerateVoiceoverInputSchema = z.object({
   script: z.string().describe('The text to be converted to speech.'),
   voice: z.string().optional().describe('The prebuilt voice to use for the voiceover.'),
+  apiKey: z.string().describe("The user's Gemini API key."),
 });
 export type GenerateVoiceoverInput = z.infer<typeof GenerateVoiceoverInputSchema>;
 
@@ -24,6 +25,7 @@ const GenerateVoiceoverOutputSchema = z.object({
 export type GenerateVoiceoverOutput = z.infer<typeof GenerateVoiceoverOutputSchema>;
 
 export async function generateVoiceover(input: GenerateVoiceoverInput): Promise<GenerateVoiceoverOutput> {
+  configureUserGenkit(input.apiKey);
   return generateVoiceoverFlow(input);
 }
 
