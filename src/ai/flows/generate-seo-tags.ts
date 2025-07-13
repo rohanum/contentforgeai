@@ -10,11 +10,12 @@
  * - GenerateSeoTagsOutput - The return type for the generateSeoTags function.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai, configureUserGenkit} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GenerateSeoTagsInputSchema = z.object({
   topic: z.string().describe('The topic to generate SEO tags for.'),
+  apiKey: z.string().describe("The user's Gemini API key."),
 });
 export type GenerateSeoTagsInput = z.infer<typeof GenerateSeoTagsInputSchema>;
 
@@ -24,6 +25,7 @@ const GenerateSeoTagsOutputSchema = z.object({
 export type GenerateSeoTagsOutput = z.infer<typeof GenerateSeoTagsOutputSchema>;
 
 export async function generateSeoTags(input: GenerateSeoTagsInput): Promise<GenerateSeoTagsOutput> {
+  configureUserGenkit(input.apiKey);
   return generateSeoTagsFlow(input);
 }
 
