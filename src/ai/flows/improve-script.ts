@@ -8,12 +8,13 @@
  * - ImproveScriptOutput - The return type for the improveScript function.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai, configureUserGenkit} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const ImproveScriptInputSchema = z.object({
   script: z.string().describe('The script to be improved.'),
   tone: z.string().optional().describe('The desired tone of the improved script (e.g., funny, informative, story).'),
+  apiKey: z.string().describe("The user's Gemini API key."),
 });
 export type ImproveScriptInput = z.infer<typeof ImproveScriptInputSchema>;
 
@@ -23,6 +24,7 @@ const ImproveScriptOutputSchema = z.object({
 export type ImproveScriptOutput = z.infer<typeof ImproveScriptOutputSchema>;
 
 export async function improveScript(input: ImproveScriptInput): Promise<ImproveScriptOutput> {
+  configureUserGenkit(input.apiKey);
   return improveScriptFlow(input);
 }
 
