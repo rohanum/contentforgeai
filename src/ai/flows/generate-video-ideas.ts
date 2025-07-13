@@ -8,7 +8,7 @@
  * - GenerateVideoIdeasOutput - The return type for the generateVideoIdeas function.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai, configureUserGenkit} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GenerateVideoIdeasInputSchema = z.object({
@@ -21,6 +21,7 @@ const GenerateVideoIdeasInputSchema = z.object({
     .string()
     .optional()
     .describe('Types of videos the user has created in the past. Optional.'),
+  apiKey: z.string().describe("The user's Gemini API key."),
 });
 export type GenerateVideoIdeasInput = z.infer<typeof GenerateVideoIdeasInputSchema>;
 
@@ -30,6 +31,7 @@ const GenerateVideoIdeasOutputSchema = z.object({
 export type GenerateVideoIdeasOutput = z.infer<typeof GenerateVideoIdeasOutputSchema>;
 
 export async function generateVideoIdeas(input: GenerateVideoIdeasInput): Promise<GenerateVideoIdeasOutput> {
+  configureUserGenkit(input.apiKey);
   return generateVideoIdeasFlow(input);
 }
 
