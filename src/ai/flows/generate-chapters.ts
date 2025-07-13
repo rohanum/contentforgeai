@@ -8,11 +8,12 @@
  * - GenerateChaptersOutput - The return type for the generateChapters function.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai, configureUserGenkit} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GenerateChaptersInputSchema = z.object({
   script: z.string().describe('The full text of the video script.'),
+  apiKey: z.string().describe("The user's Gemini API key."),
 });
 export type GenerateChaptersInput = z.infer<typeof GenerateChaptersInputSchema>;
 
@@ -27,6 +28,7 @@ const GenerateChaptersOutputSchema = z.object({
 export type GenerateChaptersOutput = z.infer<typeof GenerateChaptersOutputSchema>;
 
 export async function generateChapters(input: GenerateChaptersInput): Promise<GenerateChaptersOutput> {
+  configureUserGenkit(input.apiKey);
   return generateChaptersFlow(input);
 }
 
