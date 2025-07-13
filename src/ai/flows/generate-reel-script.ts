@@ -8,13 +8,14 @@
  * - GenerateReelScriptOutput - The return type for the generateReelScript function.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai, configureUserGenkit} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GenerateReelScriptInputSchema = z.object({
   topic: z.string().describe('The topic of the reel.'),
   trendingSong: z.string().optional().describe('The name of a trending song to incorporate.'),
   style: z.string().optional().describe('The style of the reel script (e.g., funny, informative, dramatic).'),
+  apiKey: z.string().describe("The user's Gemini API key."),
 });
 export type GenerateReelScriptInput = z.infer<typeof GenerateReelScriptInputSchema>;
 
@@ -24,6 +25,7 @@ const GenerateReelScriptOutputSchema = z.object({
 export type GenerateReelScriptOutput = z.infer<typeof GenerateReelScriptOutputSchema>;
 
 export async function generateReelScript(input: GenerateReelScriptInput): Promise<GenerateReelScriptOutput> {
+  configureUserGenkit(input.apiKey);
   return generateReelScriptFlow(input);
 }
 
