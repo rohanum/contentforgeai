@@ -7,11 +7,12 @@
  * - GenerateShortsFromScriptOutput - The return type for the function.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai, configureUserGenkit} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GenerateShortsFromScriptInputSchema = z.object({
   script: z.string().min(100).describe('The long-form video script to be repurposed.'),
+  apiKey: z.string().describe("The user's Gemini API key."),
 });
 export type GenerateShortsFromScriptInput = z.infer<typeof GenerateShortsFromScriptInputSchema>;
 
@@ -28,6 +29,7 @@ const GenerateShortsFromScriptOutputSchema = z.object({
 export type GenerateShortsFromScriptOutput = z.infer<typeof GenerateShortsFromScriptOutputSchema>;
 
 export async function generateShortsFromScript(input: GenerateShortsFromScriptInput): Promise<GenerateShortsFromScriptOutput> {
+  configureUserGenkit(input.apiKey);
   return generateShortsFromScriptFlow(input);
 }
 
