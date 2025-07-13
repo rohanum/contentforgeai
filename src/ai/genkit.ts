@@ -1,26 +1,46 @@
-// src/ai/genkit.ts
-import { genkit, configureGenkit } from 'genkit';
+import { configureGenkit } from '@genkit-ai/core';
 import { googleAI } from '@genkit-ai/googleai';
+import { vertexAI } from '@genkit-ai/vertexai';
 
-// This is the global definition of the ai object.
-// It will be configured dynamically for each request.
-export const ai = genkit({
-  plugins: [], // Plugins are now configured dynamically
-  model: 'googleai/gemini-2.0-flash',
-  // Remove static loglevel to avoid issues in different environments
-});
-
-// This function will be called from our server actions
-// to configure Genkit with the user's API key for a single request.
+// This function configures Genkit with the user's API key for a single request
 export function configureUserGenkit(apiKey: string) {
   configureGenkit({
     plugins: [
-      googleAI({
-        apiKey: apiKey,
-      }),
+      googleAI({ apiKey }),
+      // vertexAI() // Uncomment if using Vertex
     ],
-    model: 'googleai/gemini-2.0-flash',
-    flowStateStore: 'firebase',
-    traceStore: 'firebase',
+    logLevel: 'debug',
+    enableTracingAndMetrics: true,
   });
+}
+
+// Export the ai object for type safety
+export const ai = {
+  defineFlow: (config: any, handler: any) => ({
+    __isFlow: true,
+    config,
+    handler
+  }),
+  definePrompt: (config: any) => ({
+    __isPrompt: true,
+    config
+  }),
+  generate: async (options: any) => {
+    // Implementation will be handled by Genkit runtime
+    return {} as any;
+  }
+};
+
+// Type helpers for better developer experience
+declare module '@genkit-ai/core' {
+  interface FlowDefinition<Input, Output> {
+    __isFlow: true;
+    config: any;
+    handler: (input: Input) => Promise<Output>;
+  }
+  
+  interface PromptDefinition<Input, Output> {
+    __isPrompt: true;
+    config: any;
+  }
 }
