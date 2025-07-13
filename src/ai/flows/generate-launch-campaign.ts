@@ -8,7 +8,7 @@
  * - GenerateLaunchCampaignOutput - The return type for the function.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai, configureUserGenkit} from '@/ai/genkit';
 import {z} from 'zod';
 
 // Input Schema
@@ -17,6 +17,7 @@ const GenerateLaunchCampaignInputSchema = z.object({
   productDescription: z.string().describe('A detailed description of the product, its features, and benefits.'),
   targetAudience: z.string().describe('A description of the target audience for this product.'),
   launchGoal: z.enum(['sales', 'awareness', 'signups']).describe('The primary goal of the launch campaign.'),
+  apiKey: z.string().describe("The user's Gemini API key."),
 });
 export type GenerateLaunchCampaignInput = z.infer<typeof GenerateLaunchCampaignInputSchema>;
 
@@ -55,6 +56,7 @@ export type GenerateLaunchCampaignOutput = z.infer<typeof GenerateLaunchCampaign
 export async function generateLaunchCampaign(
   input: GenerateLaunchCampaignInput
 ): Promise<GenerateLaunchCampaignOutput> {
+  configureUserGenkit(input.apiKey);
   return generateLaunchCampaignFlow(input);
 }
 
