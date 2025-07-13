@@ -8,7 +8,7 @@
  * - GenerateFeatureVideoOutput - The return type for the function.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai, configureUserGenkit} from '@/ai/genkit';
 import {z} from 'zod';
 import {generateVoiceover} from './generate-voiceover';
 
@@ -29,6 +29,7 @@ const GenerateFeatureVideoInputSchema = z.object({
   voiceStyle: z
     .enum(['calm-professional', 'energetic-promotional', 'friendly-casual'])
     .describe('The desired style for the voice-over.'),
+  apiKey: z.string().describe("The user's Gemini API key."),
 });
 export type GenerateFeatureVideoInput = z.infer<
   typeof GenerateFeatureVideoInputSchema
@@ -60,6 +61,7 @@ export type GenerateFeatureVideoOutput = z.infer<
 export async function generateFeatureVideo(
   input: GenerateFeatureVideoInput
 ): Promise<GenerateFeatureVideoOutput> {
+  configureUserGenkit(input.apiKey);
   return generateFeatureVideoFlow(input);
 }
 
@@ -103,6 +105,7 @@ const generateFeatureVideoFlow = ai.defineFlow(
     const voiceoverOutput = await generateVoiceover({
       script: scriptAndStoryboard.script,
       voice,
+      apiKey: input.apiKey
     });
 
     if (!voiceoverOutput.audioUrl) {
