@@ -8,11 +8,12 @@
  * - GenerateYoutubeTitleOutput - The return type for the generateYoutubeTitle function.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai, configureUserGenkit} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GenerateYoutubeTitleInputSchema = z.object({
   topic: z.string().describe('The topic of the YouTube video.'),
+  apiKey: z.string().describe("The user's Gemini API key."),
 });
 export type GenerateYoutubeTitleInput = z.infer<typeof GenerateYoutubeTitleInputSchema>;
 
@@ -22,6 +23,7 @@ const GenerateYoutubeTitleOutputSchema = z.object({
 export type GenerateYoutubeTitleOutput = z.infer<typeof GenerateYoutubeTitleOutputSchema>;
 
 export async function generateYoutubeTitle(input: GenerateYoutubeTitleInput): Promise<GenerateYoutubeTitleOutput> {
+  configureUserGenkit(input.apiKey);
   return generateYoutubeTitleFlow(input);
 }
 
