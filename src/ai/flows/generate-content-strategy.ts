@@ -8,12 +8,13 @@
  * - GenerateContentStrategyOutput - The return type for the generateContentStrategy function.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai, configureUserGenkit} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GenerateContentStrategyInputSchema = z.object({
   topic: z.string().describe('The user\'s primary topic, niche, or industry.'),
   goal: z.enum(['grow-audience', 'launch-product', 'build-authority']).describe('The primary goal for the content strategy.'),
+  apiKey: z.string().describe("The user's Gemini API key."),
 });
 export type GenerateContentStrategyInput = z.infer<typeof GenerateContentStrategyInputSchema>;
 
@@ -47,6 +48,7 @@ const GenerateContentStrategyOutputSchema = z.object({
 export type GenerateContentStrategyOutput = z.infer<typeof GenerateContentStrategyOutputSchema>;
 
 export async function generateContentStrategy(input: GenerateContentStrategyInput): Promise<GenerateContentStrategyOutput> {
+  configureUserGenkit(input.apiKey);
   return generateContentStrategyFlow(input);
 }
 
