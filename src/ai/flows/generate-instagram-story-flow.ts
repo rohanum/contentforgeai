@@ -9,7 +9,7 @@
  * - GenerateInstagramStoryFlowOutput - The return type for the generateInstagramStoryFlow function.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai, configureUserGenkit} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GenerateInstagramStoryFlowInputSchema = z.object({
@@ -17,6 +17,7 @@ const GenerateInstagramStoryFlowInputSchema = z.object({
   storyType: z
     .enum(['value', 'announcement', 'brand storytelling'])
     .describe('The type of story to generate.'),
+  apiKey: z.string().describe("The user's Gemini API key."),
 });
 export type GenerateInstagramStoryFlowInput = z.infer<
   typeof GenerateInstagramStoryFlowInputSchema
@@ -34,6 +35,7 @@ export type GenerateInstagramStoryFlowOutput = z.infer<
 export async function generateInstagramStoryFlow(
   input: GenerateInstagramStoryFlowInput
 ): Promise<GenerateInstagramStoryFlowOutput> {
+  configureUserGenkit(input.apiKey);
   return generateInstagramStory(input);
 }
 
@@ -71,4 +73,3 @@ const generateInstagramStory = ai.defineFlow(
     return output!;
   }
 );
-
