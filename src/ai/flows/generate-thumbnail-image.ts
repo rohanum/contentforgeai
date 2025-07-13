@@ -7,7 +7,7 @@
  * - GenerateThumbnailImageOutput - The return type for the function.
  */
 
-import { ai } from '@/ai/genkit';
+import { ai, configureUserGenkit } from '@/ai/genkit';
 import { z } from 'genkit';
 
 const GenerateThumbnailImageInputSchema = z.object({
@@ -17,6 +17,7 @@ const GenerateThumbnailImageInputSchema = z.object({
     .describe(
       'The desired artistic style for the thumbnail (e.g., Bold & Contrasting, Minimalist & Clean).'
     ),
+  apiKey: z.string().describe("The user's Gemini API key."),
 });
 export type GenerateThumbnailImageInput = z.infer<
   typeof GenerateThumbnailImageInputSchema
@@ -38,6 +39,7 @@ export type GenerateThumbnailImageOutput = z.infer<
 export async function generateThumbnailImage(
   input: GenerateThumbnailImageInput
 ): Promise<GenerateThumbnailImageOutput> {
+  configureUserGenkit(input.apiKey);
   return generateThumbnailImageFlow(input);
 }
 
