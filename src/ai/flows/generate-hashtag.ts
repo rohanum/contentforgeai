@@ -8,7 +8,7 @@
  * - GenerateHashtagOutput - The return type for the generateHashtag function.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai, configureUserGenkit} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GenerateHashtagInputSchema = z.object({
@@ -22,6 +22,7 @@ const GenerateHashtagInputSchema = z.object({
     .optional()
     .default(['low', 'medium', 'viral'])
     .describe('The desired popularity levels of hashtags to generate (low, medium, viral).'),
+  apiKey: z.string().describe("The user's Gemini API key."),
 });
 export type GenerateHashtagInput = z.infer<typeof GenerateHashtagInputSchema>;
 
@@ -35,6 +36,7 @@ const GenerateHashtagOutputSchema = z.object({
 export type GenerateHashtagOutput = z.infer<typeof GenerateHashtagOutputSchema>;
 
 export async function generateHashtag(input: GenerateHashtagInput): Promise<GenerateHashtagOutput> {
+  configureUserGenkit(input.apiKey);
   return generateHashtagFlow(input);
 }
 
